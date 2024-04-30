@@ -1,10 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'layout/base.html' %}
 
-</body>
-</html>
+{% block title %}
+Quản trị viên
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-5">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Total students</h5>
+                <p class="card-text fs-2 text fw-bold"> 300 </p>
+            </div>
+            <div class="card-footer">
+                <h5>Semester 1</h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-5">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Total students</h5>
+                <p class="card-text fs-2 text fw-bold">300</p>
+            </div>
+            <div class="card-footer">
+                <h5>Semester 1</h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-2">
+        <div class="card" style="width:400px">
+            <img class="card-img-top" src="https://th.bing.com/th/id/R.dbc8e6138b38860cee6899eabc67df45?rik=hZCUMR4xQ%2btlBA&pid=ImgRaw&r=0"
+                 style="width:100px" alt="Card image">
+            <div class="card-body">
+                <h4 class="card-title">Trần Chinh</h4>
+                <p class="card-text">Quản trị viên</p>
+                <a href="#" class="btn btn-danger">Đăng xuất</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
