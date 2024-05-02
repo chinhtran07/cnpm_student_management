@@ -8,8 +8,13 @@ def index():
 
 
 @app.route('/policy')
-def policy():
-    return render_template('admin/policy_adjust.html')
+def adjust_policy():
+    return render_template('admin/policy-adjust.html')
+
+
+@app.route('/subjects')
+def manage_subject():
+    return render_template('admin/management-subjects.html')
 
 
 if __name__ == '__main__':
