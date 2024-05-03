@@ -1,10 +1,8 @@
-{% extends 'layout/base.html' %}
+{% extends 'admin/master.html' %}
 
-{% block title %}
-Quản trị viên
-{% endblock %}
-
-{% block content %}
+{% block body %}
+{% if current_user.is_authenticated %}
+<h1 class="text-info text-center">CHÀO MỪNG BẠN ĐẾN TRANG QUẢN TRỊ!</h1>
 <div class="row">
     <div class="col-sm-5">
         <div class="card">
@@ -34,45 +32,28 @@ Quản trị viên
                  src="https://th.bing.com/th/id/R.dbc8e6138b38860cee6899eabc67df45?rik=hZCUMR4xQ%2btlBA&pid=ImgRaw&r=0"
                  style="width:100px" alt="Card image">
             <div class="card-body">
-                <h4 class="card-title">Trần Chinh</h4>
-                <p class="card-text">Quản trị viên</p>
-                <a href="#" class="btn btn-danger">Đăng xuất</a>
+                <h4 class="card-title">{{current_user.first_name}}</h4>
             </div>
         </div>
     </div>
 </div>
-<h4>Thông báo và tin tức</h4>
-<div class="row mx-5 border rounded-3 bg-light" style="height:500px">
-    <div class="col-sm-3 border bg-light">
-        <h5 class="">Tiêu đề</h5>
-        <div class="bg-info rounded-3 overflow-auto" style="height:450px">
-            <ul type="none">
-                <li>Thong tin nhu dị nè</li>
-                <li>Khối 10</li>
-                <li>Khối 11</li>
-                <li>Khối 12</li>
-            </ul>
-        </div>
+{% else %}
+<h1 class="text-center text-info mt-1">ĐĂNG NHẬP</h1>
+<form method="post" action="/admin-login">
+    <div class="form-group mb-3 mt-3">
+        <label for="username">Tên đăng nhập</label>
+        <input type="text" class="form-control" id="username" placeholder="Tên đăng nhập" name="username" pattern="[a-zA-Z0-9]*" required>
     </div>
-    <div class="col-sm-9 bg-light border">
-        <h5>Nội dung</h5>
-        <div class="rounded-3 border overflow-auto" style="height:450px">
-            <p>Sự hứng thú của em với chủ đề của khóa học này không chỉ là một đam mê, mà còn là một nguồn cảm hứng
-                không ngừng. Em cảm thấy cuốn hút bởi những nội dung sẽ được học trong khóa học này, và khóa học này là
-                cơ hội lớn để tôi có thể mở rộng và phát triển kiến thức của mình. Từ khi bắt đầu tìm hiểu về chủ đề này
-                đặc biệt là IoT, em bị thu hút bởi những điều thú vị và ứng dụng thực tế mà nó mang lại.
-                Từ những ứng dụng hiện đại trong đời sống, mỗi khía cạnh đều rất hấp dẫn và đầy tiềm năng để khám phá.
-                Em mong qua khóa học này em sẽ làm được một ứng dụng thực tế và thực sự mang lại lợi ích. Mỗi buổi học
-                là một cơ hội để thảo luận, chia sẻ ý kiến và học hỏi từ những người cùng đam mê.
-                Em mong đợi những cuộc trao đổi đầy sôi nổi và sự tương tác tích cực với giảng viên và bạn bè. Em tin
-                rằng những trải nghiệm này sẽ là nguồn động viên mạnh mẽ cho sự phát triển cá nhân và sự nghiệp của em
-                trong tương lai.
-                Cuối cùng, sự hứng thú của em với chủ đề này không chỉ dừng lại ở việc học hỏi, mà còn là việc áp dụng
-                kiến thức và kỹ năng mà em thu được ứng dụng vào công việc và sự nghiệp của mình. Em hy vọng rằng khóa
-                học này sẽ là bước đầu tiên trong hành trình của tôi để trở thành một chuyên gia trong lĩnh vực IoT và
-                ảnh hưởng tích cực đến cộng đồng xung quanh.
-            </p>
-        </div>
+
+    <div class="form-group mt-3 mb-3">
+        <label for="password">Mật khẩu</label>
+        <input type="password" class="form-control" id="password" placeholder="Mật khẩu" name="password" required>
+
     </div>
-</div>
+
+    <div class="form-floating mt-3 mb-3">
+        <button class="btn btn-success" type="submit">Đăng nhập</button>
+    </div>
+</form>
+{% endif %}
 {% endblock %}

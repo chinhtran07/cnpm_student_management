@@ -51,15 +51,16 @@ class Information(Base):
     address = Column(String(100))
     phone_number = Column(String(11))
     email = Column(String(30), unique=True)
+    avatar = Column(String(255))
     is_active = Column(Boolean, default=True)
 
 
 class User(Information, UserMixin):
     id = Column(Integer, autoincrement=True, primary_key=True)
     username = Column(String(20), unique=True, nullable=False)
-    password = Column(String(20))
+    password = Column(String(255))
     user_role = Column(Enum(UserRole), default=UserRole.TEACHER)
-    is_supervisor = Column(Boolean, nullable=False)
+    is_supervisor = Column(Boolean, nullable=False, default=False)
 
     admin = relationship('Admin', backref='user', uselist=False)
     teacher = relationship('Teacher', backref='user', uselist=False)
@@ -113,7 +114,7 @@ class ScoreDetail(Base):
 
 class Subject(Base):
     name = Column(String(20))
-    teach = relationship('Teach', backref='class', lazy=True)
+    teach = relationship('Teach', backref='subjects', lazy=True)
 
 
 class Teach(Base):
@@ -152,3 +153,10 @@ class StudentClass(Base):
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
+
+        import hashlib
+        u = User(first_name='admin', username='admin',
+                 password=str(hashlib.md5("123456".encode('utf-8')).hexdigest()),
+                 user_role=UserRole.ADMIN, is_supervisor=True)
+        db.session.add(u)
+        db.session.commit()
