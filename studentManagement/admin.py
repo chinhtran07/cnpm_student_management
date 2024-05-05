@@ -13,22 +13,18 @@ from studentManagement.models import Subject, Policy, UserRole, User, Teacher, E
 
 
 class IsAuthenticatedView(ModelView):
+from flask_admin import Admin, expose
+from flask_admin.contrib.sqla import ModelView
+from flask_admin import BaseView
+from studentManagement.models import UserRole
+from studentManagement import app, db
+from flask_login import logout_user, current_user
+from flask import redirect
+
+
+class AuthenticatedView(ModelView):
     def is_accessible(self):
         return current_user.is_authenticated and current_user.user_role == UserRole.ADMIN
-
-
-# class AdminInlineModelAdmin(InlineFormAdmin):
-#     model = Admin
-#     form_columns = ('user_ref',)  # Assuming Admin has a field 'user_ref'
-#
-# class TeacherInlineModelAdmin(InlineModelAdmin):
-#     model = Teacher
-#     form_columns = ('user_ref',)  # Assuming Teacher has a field 'user_ref'
-#
-# class EmployeeInlineModelAdmin(InlineModelAdmin):
-#     model = Employee
-#     form_columns = ('user_ref',)
-#
 
 
 class HomeView(AdminIndexView):

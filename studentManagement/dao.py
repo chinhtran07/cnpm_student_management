@@ -13,7 +13,6 @@ def count_students_of_period(period_id):
 def get_most_recent_period():
     return Period.query.order_by(desc(Period.id)).first()
 
-
 def get_user_by_id(id):
     return User.query.get(id)
 
@@ -24,8 +23,9 @@ def add_user(name, username, password, avatar):
     db.session.add(u)
     db.session.commit()
 
-
+    
 def auth_user(username, password):
     password = str(hashlib.md5(password.strip().encode('utf-8')).hexdigest())
     return User.query.filter(User.username.__eq__(username.strip()),
                              User.password.__eq__(password)).first()
+

@@ -26,7 +26,6 @@ def process_admin_login():
 def load_user(user_id):
     return dao.get_user_by_id(user_id)
 
-
 if __name__ == '__main__':
     with app.app_context():
         from studentManagement import admin
