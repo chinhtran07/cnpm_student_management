@@ -1,5 +1,5 @@
-from sqlalchemy import Column, String, Float, Integer, ForeignKey, Enum, Boolean, DateTime
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, String, Float, Integer, ForeignKey, Enum, Boolean, DateTime, event
+from sqlalchemy.orm import relationship, validates
 from studentManagement import db, app
 from flask_login import UserMixin
 from enum import Enum as AttrEnum
@@ -14,7 +14,7 @@ class UserGender(AttrEnum):
 class UserRole(AttrEnum):
     ADMIN = 1
     TEACHER = 2
-    STAFF = 3
+    EMPLOYEE = 3
 
 
 class StudentGrade(AttrEnum):
@@ -51,15 +51,16 @@ class Information(Base):
     address = Column(String(100))
     phone_number = Column(String(11))
     email = Column(String(30), unique=True)
+    avatar = Column(String(255))
     is_active = Column(Boolean, default=True)
 
 
 class User(Information, UserMixin):
     id = Column(Integer, autoincrement=True, primary_key=True)
     username = Column(String(20), unique=True, nullable=False)
-    password = Column(String(20))
+    password = Column(String(255))
     user_role = Column(Enum(UserRole), default=UserRole.TEACHER)
-    is_supervisor = Column(Boolean, nullable=False)
+    is_supervisor = Column(Boolean, nullable=False, default=False)
 
     admin = relationship('Admin', backref='user', uselist=False)
     teacher = relationship('Teacher', backref='user', uselist=False)
@@ -67,7 +68,7 @@ class User(Information, UserMixin):
 
 
 class Student(Information):
-    admission_date = Column(DateTime)
+    admission_date = Column(DateTime, default=datetime.now())
 
     student_class = relationship('StudentClass', backref='student', lazy=True)
 
@@ -96,6 +97,9 @@ class Period(Base):
     form_teacher = relationship('FormTeacher', backref='period', uselist=False, lazy=True)
     student_class = relationship('StudentClass', backref='period', lazy=True)
 
+    def __str__(self):
+        return f'{self.semester} {self.year}'
+
 
 class Class(Base):
     name = Column(String(10), nullable=False)
@@ -103,6 +107,9 @@ class Class(Base):
     teach = relationship('Teach', backref='class', lazy=True)
     form_teacher = relationship('FormTeacher', backref='class', uselist=False, lazy=True)
     student_class = relationship('StudentClass', backref='class', lazy=True)
+
+    def __str__(self):
+        return self.name
 
 
 class ScoreDetail(Base):
@@ -113,7 +120,10 @@ class ScoreDetail(Base):
 
 class Subject(Base):
     name = Column(String(20))
-    teach = relationship('Teach', backref='class', lazy=True)
+    grade = Column(Enum(StudentGrade))
+    teach = relationship('Teach', backref='subjects', lazy=True)
+    exam_15mins = Column(Integer)
+    exam_45mins = Column(Integer)
 
 
 class Teach(Base):
@@ -138,8 +148,13 @@ class Score(Base):
 class Policy(Base):
     content = Column(String(255))
     data = Column(Integer)
-    created_date = Column(DateTime)
+    created_date = Column(DateTime, default=datetime.now())
     updated_date = Column(DateTime)
+
+
+@event.listens_for(Policy, 'before_update')
+def before_update_listener(mapper, connection, target):
+    target.updated_date = datetime.now()
 
 
 class StudentClass(Base):
@@ -152,3 +167,10 @@ class StudentClass(Base):
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
+
+        import hashlib
+        u = User(first_name='admin', username='admin',
+                 password=str(hashlib.md5("123456".encode('utf-8')).hexdigest()),
+                 user_role=UserRole.ADMIN, is_supervisor=True)
+        db.session.add(u)
+        db.session.commit()
