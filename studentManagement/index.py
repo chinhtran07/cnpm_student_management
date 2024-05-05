@@ -11,15 +11,6 @@ def index():
     return render_template('index.html')
 
 
-# @app.route('/policy')
-# def adjust_policy():
-#     return render_template('admin/policy-adjust.html')
-
-
-# @app.route('/subjects')
-# def manage_subject():
-#     return render_template('admin/management-subjects.html')
-
 @app.route("/admin-login", methods=['post'])
 def process_admin_login():
     username = request.form.get('username')
