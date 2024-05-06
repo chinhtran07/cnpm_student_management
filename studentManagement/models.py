@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Float, Integer, ForeignKey, Enum, Boolean, DateTime, event
+from sqlalchemy import Column, String, Float, Integer, ForeignKey, Enum, Boolean, DateTime, event, func
 from sqlalchemy.orm import relationship, validates
 from studentManagement import db, app
 from flask_login import UserMixin
@@ -56,7 +56,6 @@ class Information(Base):
 
 
 class User(Information, UserMixin):
-    id = Column(Integer, autoincrement=True, primary_key=True)
     username = Column(String(20), unique=True, nullable=False)
     password = Column(String(255))
     user_role = Column(Enum(UserRole), default=UserRole.TEACHER)
@@ -69,7 +68,6 @@ class User(Information, UserMixin):
 
 class Student(Information):
     admission_date = Column(DateTime, default=datetime.now())
-
     student_class = relationship('StudentClass', backref='student', lazy=True)
 
 
@@ -95,7 +93,6 @@ class Period(Base):
     year = Column(String(4))
     teach = relationship('Teach', backref='period', lazy=True)
     form_teacher = relationship('FormTeacher', backref='period', uselist=False, lazy=True)
-    student_class = relationship('StudentClass', backref='period', lazy=True)
 
     def __str__(self):
         return f'{self.semester} {self.year}'
@@ -115,7 +112,7 @@ class Class(Base):
 class ScoreDetail(Base):
     score = Column(Float)
     type = Column(Enum(ScoreType))
-    created_date = Column(DateTime)
+    created_date = Column(DateTime, default=datetime.now())
 
 
 class Subject(Base):
@@ -149,19 +146,12 @@ class Policy(Base):
     content = Column(String(255))
     data = Column(Integer)
     created_date = Column(DateTime, default=datetime.now())
-    updated_date = Column(DateTime)
-
-
-@event.listens_for(Policy, 'before_update')
-def before_update_listener(mapper, connection, target):
-    target.updated_date = datetime.now()
+    updated_date = Column(DateTime, default=func.now(), onupdate=func.now())
 
 
 class StudentClass(Base):
-
     student_id = Column(Integer, ForeignKey(Student.id))
     class_id = Column(Integer, ForeignKey(Class.id))
-    period_id = Column(Integer, ForeignKey(Period.id), nullable=True)
 
 
 if __name__ == '__main__':
@@ -169,8 +159,9 @@ if __name__ == '__main__':
         db.create_all()
 
         import hashlib
-        u = User(first_name='admin', username='admin',
+        u = User(first_name='', username='admin',
                  password=str(hashlib.md5("123456".encode('utf-8')).hexdigest()),
                  user_role=UserRole.ADMIN, is_supervisor=True)
+
         db.session.add(u)
         db.session.commit()

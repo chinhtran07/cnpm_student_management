@@ -1,8 +1,8 @@
+import hashlib
+
 from flask import redirect
 from flask_admin import Admin, BaseView, expose, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
-from flask_admin.form import rules
-from flask_admin.model import InlineFormAdmin
 from flask_login import current_user, logout_user
 from wtforms import validators
 from wtforms.fields.numeric import IntegerField
@@ -10,16 +10,6 @@ from wtforms.fields.simple import StringField
 
 from studentManagement import app, db, dao
 from studentManagement.models import Subject, Policy, UserRole, User, Teacher, Employee, Period
-
-
-class IsAuthenticatedView(ModelView):
-from flask_admin import Admin, expose
-from flask_admin.contrib.sqla import ModelView
-from flask_admin import BaseView
-from studentManagement.models import UserRole
-from studentManagement import app, db
-from flask_login import logout_user, current_user
-from flask import redirect
 
 
 class AuthenticatedView(ModelView):
@@ -31,24 +21,27 @@ class HomeView(AdminIndexView):
     @expose('/')
     def index(self):
         period = dao.get_most_recent_period()
-        amount_students = dao.count_students_of_period(period.id)
-        return self.render('admin/index.html', amount_students=amount_students, period=period)
+        return self.render('admin/index.html', period=period)
 
     def is_accessible(self):
         return True
 
 
-class UserView(IsAuthenticatedView):
+class UserView(AuthenticatedView):
     column_list = ['id', 'username', 'first_name', 'user_role', 'is_active']
     column_searchable_list = ['id', 'username', 'first_name']
     column_filters = ['id', 'username', 'first_name']
 
-    form_extra_fields = {
-        'user_ref': StringField('User Reference'),
-    }
+    def on_model_change(self, form, model, is_created):
+        if 'password' in form:
+            raw_password = form.password.data
+            if raw_password:
+                model.password = hashlib.md5(raw_password.encode('utf-8')).hexdigest()
+
+        super().on_model_change(form, model, is_created)
 
 
-class MySubjectView(IsAuthenticatedView):
+class MySubjectView(AuthenticatedView):
     column_list = ['id', 'name', 'grade', 'exam_15mins', 'exam_45mins']
     column_searchable_list = ['id', 'name']
     column_filters = ['id', 'name', 'grade']
@@ -65,7 +58,7 @@ class MySubjectView(IsAuthenticatedView):
     }
 
 
-class MyPolicyView(IsAuthenticatedView):
+class MyPolicyView(AuthenticatedView):
     column_list = ['id', 'content', 'data']
 
 
