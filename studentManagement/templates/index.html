@@ -30,9 +30,17 @@
                  src="https://th.bing.com/th/id/R.dbc8e6138b38860cee6899eabc67df45?rik=hZCUMR4xQ%2btlBA&pid=ImgRaw&r=0"
                  style="width:100px" alt="Card image">
             <div class="card-body">
-                <h4 class="card-title">Trần Chinh</h4>
-                <p class="card-text">Quản trị viên</p>
-                <a href="#" class="btn btn-danger">Đăng xuất</a>
+                <h4 class="card-title">{{ current_user.last_name }} {{ current_user.firstname }}</h4>
+                <p class="card-text">
+                    {% if current_user.is_authenticated %}
+                    {% if current_user.user_role == 2 %}
+                    Giáo viên
+                    {% else %}
+                    Nhân viên
+                    {% endif %}
+                    {% endif %}
+                </p>
+                <a href="/logout" class="btn btn-danger">Đăng xuất</a>
             </div>
         </div>
     </div>
