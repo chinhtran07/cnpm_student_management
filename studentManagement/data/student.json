@@ -1,0 +1,276 @@
+[
+  {
+    "id":1,
+    "first_name": "Văn An",
+    "last_name": "Nguyễn",
+    "gender": "MALE",
+    "address": "Hà Nội",
+    "phone_number": "8553481048",
+    "email": "test1@gmail.com",
+    "avatar": "https://res.cloudinary.com/dwdvnztnn/image/upload/v1714722950/user_ttxpit.jpg"
+  },
+  {
+    "id":2,
+    "first_name": "Thị Bình",
+    "last_name": "Trần",
+    "gender": "FEMALE",
+    "address": "Hồ Chí Minh",
+    "phone_number": "8553481048",
+    "email": "test2@gmail.com",
+    "avatar": "https://res.cloudinary.com/dwdvnztnn/image/upload/v1714722950/user_ttxpit.jpg"
+  },
+  {
+    "id":3,
+    "first_name": "Văn Cường",
+    "last_name": "Lê",
+    "gender": "MALE",
+    "address": "Hồ Chí Minh",
+    "phone_number": "8553481048",
+    "email": "test3@gmail.com",
+    "avatar": "https://res.cloudinary.com/dwdvnztnn/image/upload/v1714722950/user_ttxpit.jpg"
+  },
+  {
+    "id":4,
+    "first_name": "Thị Dung",
+    "last_name": "Phạm",
+    "gender": "MALE",
+    "address": "Hồ Chí Minh",
+    "phone_number": "8553481048",
+    "email": "test4@gmail.com",
+    "avatar": "https://res.cloudinary.com/dwdvnztnn/image/upload/v1714722950/user_ttxpit.jpg"
+  },{
+    "id":5,
+    "first_name": "Văn Đức",
+    "last_name": "Hoàng",
+    "gender": "MALE",
+    "address": "Hải Phòng",
+    "phone_number": "8553481048",
+    "email": "test5@gmail.com",
+    "avatar": "https://res.cloudinary.com/dwdvnztnn/image/upload/v1714722950/user_ttxpit.jpg"
+  },{
+    "id":6,
+    "first_name": "Thị Hương",
+    "last_name": "Vũ",
+    "gender": "MALE",
+    "address": "Hải Phòng",
+    "phone_number": "8553481048",
+    "email": "test6@gmail.com",
+    "avatar": "https://res.cloudinary.com/dwdvnztnn/image/upload/v1714722950/user_ttxpit.jpg"
+  },{
+    "id":7,
+    "first_name": "Văn Hải",
+    "last_name": "Đặng",
+    "gender": "MALE",
+    "address": "Hải Phòng",
+    "phone_number": "8553481048",
+    "email": "test7@gmail.com",
+    "avatar": "https://res.cloudinary.com/dwdvnztnn/image/upload/v1714722950/user_ttxpit.jpg"
+  },{
+    "id":8,
+    "first_name": "Thúy Lan",
+    "last_name": "Bùi",
+    "gender": "MALE",
+    "address": "Hải Phòng",
+    "phone_number": "8553481048",
+    "email": "test8@gmail.com",
+    "avatar": "https://res.cloudinary.com/dwdvnztnn/image/upload/v1714722950/user_ttxpit.jpg"
+  },{
+    "id":9,
+    "first_name": "Thanh Long",
+    "last_name": "Nguyễn",
+    "gender": "MALE",
+    "address": "Đà Nẵng",
+    "phone_number": "8553481048",
+    "email": "test9@gmail.com",
+    "avatar": "https://res.cloudinary.com/dwdvnztnn/image/upload/v1714722950/user_ttxpit.jpg"
+  },{
+    "id":10,
+    "first_name": "Mai",
+    "last_name": "Ngô",
+    "gender": "MALE",
+    "address": "Đà Nẵng",
+    "phone_number": "8553481048",
+    "email": "test10@gmail.com",
+    "avatar": "https://res.cloudinary.com/dwdvnztnn/image/upload/v1714722950/user_ttxpit.jpg"
+  },{
+    "id":11,
+    "first_name": "Thái Minh",
+    "last_name": "Lê",
+    "gender": "MALE",
+    "address": "Đà Nẵng",
+    "phone_number": "8553481048",
+    "email": "test11@gmail.com",
+    "avatar": "https://res.cloudinary.com/dwdvnztnn/image/upload/v1714722950/user_ttxpit.jpg"
+  },{
+    "id":12,
+    "first_name": "Ngọc",
+    "last_name": "Lý",
+    "gender": "MALE",
+    "address": "Đà Nẵng",
+    "phone_number": "8553481048",
+    "email": "test12@gmail.com",
+    "avatar": "https://res.cloudinary.com/dwdvnztnn/image/upload/v1714722950/user_ttxpit.jpg"
+  },{
+    "id":13,
+    "first_name": "Văn Phú",
+    "last_name": "Trần",
+    "gender": "MALE",
+    "address": "Cần Thơ",
+    "phone_number": "8553481048",
+    "email": "test13@gmail.com",
+    "avatar": "https://res.cloudinary.com/dwdvnztnn/image/upload/v1714722950/user_ttxpit.jpg"
+  },{
+    "id":14,
+    "first_name": "Chinh",
+    "last_name": "Trần",
+    "gender": "MALE",
+    "address": "Cần Thơ",
+    "phone_number": "8553481048",
+    "email": "test14@gmail.com",
+    "avatar": "https://res.cloudinary.com/dwdvnztnn/image/upload/v1714722950/user_ttxpit.jpg"
+  },{
+    "id":15,
+    "first_name": "Thanh Bình",
+    "last_name": "Dương",
+    "gender": "MALE",
+    "address": "Hải Dương",
+    "phone_number": "8553481048",
+    "email": "test15@gmail.com",
+    "avatar": "https://res.cloudinary.com/dwdvnztnn/image/upload/v1714722950/user_ttxpit.jpg"
+  },{
+    "id":16,
+    "first_name": "Thị Tâm",
+    "last_name": "Đinh",
+    "gender": "MALE",
+    "address": "Hải Dương",
+    "phone_number": "8553481048",
+    "email": "test16@gmail.com",
+    "avatar": "https://res.cloudinary.com/dwdvnztnn/image/upload/v1714722950/user_ttxpit.jpg"
+  },{
+    "id":17,
+    "first_name": "Văn Thành",
+    "last_name": "Trương",
+    "gender": "MALE",
+    "address": "Bắc Ninh",
+    "phone_number": "8553481048",
+    "email": "test17@gmail.com",
+    "avatar": "https://res.cloudinary.com/dwdvnztnn/image/upload/v1714722950/user_ttxpit.jpg"
+  },{
+    "id":18,
+    "first_name": "Thị Trang",
+    "last_name": "Hoàng",
+    "gender": "FEMALE",
+    "address": "Bắc Ninh",
+    "phone_number": "8553481048",
+    "email": "test18@gmail.com",
+    "avatar": "https://res.cloudinary.com/dwdvnztnn/image/upload/v1714722950/user_ttxpit.jpg"
+  },{
+    "id":19,
+    "first_name": "Văn Tuấn",
+    "last_name": "Phan",
+    "gender": "MALE",
+    "address": "Bắc Ninh",
+    "phone_number": "8553481048",
+    "email": "test19@gmail.com",
+    "avatar": "https://res.cloudinary.com/dwdvnztnn/image/upload/v1714722950/user_ttxpit.jpg"
+  },{
+    "id":20,
+    "first_name": "Việt",
+    "last_name": "Đào",
+    "gender": "MALE",
+    "address": "Thừa Thiên Huế",
+    "phone_number": "8553481048",
+    "email": "test20@gmail.com",
+    "avatar": "https://res.cloudinary.com/dwdvnztnn/image/upload/v1714722950/user_ttxpit.jpg"
+  },{
+    "id":21,
+    "first_name": "Uyên",
+    "last_name": "Vũ",
+    "gender": "FEMALE",
+    "address": "Thừa Thiên Huế",
+    "phone_number": "8553481048",
+    "email": "test21@gmail.com",
+    "avatar": "https://res.cloudinary.com/dwdvnztnn/image/upload/v1714722950/user_ttxpit.jpg"
+  },{
+    "id":22,
+    "first_name": "Xuân",
+    "last_name": "Hồ",
+    "gender": "FEMALE",
+    "address": "Thừa Thiên Huế",
+    "phone_number": "8553481048",
+    "email": "test22@gmail.com",
+    "avatar": "https://res.cloudinary.com/dwdvnztnn/image/upload/v1714722950/user_ttxpit.jpg"
+  },{
+    "id":23,
+    "first_name": "Yên",
+    "last_name": "Bạch",
+    "gender": "MALE",
+    "address": "Thừa Thiên Huế",
+    "phone_number": "8553481048",
+    "email": "test23@gmail.com",
+    "avatar": "https://res.cloudinary.com/dwdvnztnn/image/upload/v1714722950/user_ttxpit.jpg"
+  },{
+    "id":24,
+    "first_name": "Zương",
+    "last_name": "Vương",
+    "gender": "FEMALE",
+    "address": "Thừa Thiên Huế",
+    "phone_number": "8553481048",
+    "email": "test24@gmail.com",
+    "avatar": "https://res.cloudinary.com/dwdvnztnn/image/upload/v1714722950/user_ttxpit.jpg"
+  },{
+    "id":25,
+    "first_name": "Thanh",
+    "last_name": "Nguyễn",
+    "gender": "MALE",
+    "address": "Thừa Thiên Huế",
+    "phone_number": "8553481048",
+    "email": "test25@gmail.com",
+    "avatar": "https://res.cloudinary.com/dwdvnztnn/image/upload/v1714722950/user_ttxpit.jpg"
+  },{
+    "id":26,
+    "first_name": "Văn Nam",
+    "last_name": "Nguyễn",
+    "gender": "MALE",
+    "address": "Thừa Thiên Huế",
+    "phone_number": "8553481048",
+    "email": "test26@gmail.com",
+    "avatar": "https://res.cloudinary.com/dwdvnztnn/image/upload/v1714722950/user_ttxpit.jpg"
+  },{
+    "id":27,
+    "first_name": "Anh",
+    "last_name": "Lê",
+    "gender": "FEMALE",
+    "address": "Thừa Thiên Huế",
+    "phone_number": "8553481048",
+    "email": "test27@gmail.com",
+    "avatar": "https://res.cloudinary.com/dwdvnztnn/image/upload/v1714722950/user_ttxpit.jpg"
+  },{
+    "id":28,
+    "first_name": "Văn Đạt",
+    "last_name": "Phạm",
+    "gender": "MALE",
+    "address": "Kon Tum",
+    "phone_number": "8553481048",
+    "email": "test28@gmail.com",
+    "avatar": "https://res.cloudinary.com/dwdvnztnn/image/upload/v1714722950/user_ttxpit.jpg"
+  },{
+    "id":29,
+    "first_name": "Thị Hà",
+    "last_name": "Lý",
+    "gender": "FEMALE",
+    "address": "Kon Tum",
+    "phone_number": "8553481048",
+    "email": "test29@gmail.com",
+    "avatar": "https://res.cloudinary.com/dwdvnztnn/image/upload/v1714722950/user_ttxpit.jpg"
+  },{
+    "id":30,
+    "first_name": "Hữu Tuấn",
+    "last_name": "Đinh",
+    "gender": "MALE",
+    "address": "Bình Phước",
+    "phone_number": "8553481048",
+    "email": "test30@gmail.com",
+    "avatar": "https://res.cloudinary.com/dwdvnztnn/image/upload/v1714722950/user_ttxpit.jpg"
+  }
+]

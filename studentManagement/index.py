@@ -1,3 +1,4 @@
+import math
 import pdb
 
 from flask import render_template, request, redirect, session
@@ -23,7 +24,9 @@ def login_my_user():
         password = request.form.get('password')
         role = request.form.get('role')
 
-        user = dao.auth_user(username=username, password=password)
+        print(role)
+
+        user = dao.auth_user(username=username, password=password, role=role)
         if user:
             login_user(user)
 
@@ -58,18 +61,46 @@ def load_user(user_id):
     return dao.get_user_by_id(user_id)
 
 
-@app.route('/employee')
+@app.route('/EMPLOYEE')
 def employee():
     return render_template("index.html")
 
 
-@app.route('/teacher')
+@app.route('/TEACHER')
 def teacher():
-    return render_template('index.html')
+    grade = request.args.get('grade')
+    page = request.args.get("page")
+    class_name = request.args.get('class_name')
+
+    classes = dao.load_class(grade=grade, page=page, class_name=class_name)
+    total_class = dao.count_class()
+
+    teacher = dao.get_teacher_id(current_user.id)
+    for t in teacher:
+        id = t.id
+    teach_class = dao.get_teach_class(teacher_id=id)
+
+    return render_template('teacher.html', classes=classes,
+                           pages=math.ceil(total_class / 4), teach_class=teach_class)
+
+
+@app.route('/TEACHER/scoreManagement')
+def score_management():
+    return render_template('scoreManagement.html')
+
+
+@app.route('/TEACHER/list_student')
+def list_student():
+    class_id = request.args.get('class_id')
+
+    students = dao.get_list_student(class_id=class_id)
+
+    return render_template('listStudent.html', students=students)
 
 
 if __name__ == '__main__':
     with app.app_context():
         from studentManagement import admin
+
         dao.init_policy()
         app.run(debug=True)
