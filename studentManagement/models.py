@@ -36,13 +36,11 @@ class Semester(AttrEnum):
 
 
 class Base(db.Model):
-
     __abstract__ = True
     id = Column(Integer, autoincrement=True, primary_key=True)
 
 
 class Information(Base):
-
     __abstract__ = True
 
     first_name = Column(String(20))
@@ -163,15 +161,112 @@ class StudentClass(Base):
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
+        
+        # import json
+        #
+        # with open('data/student.json', encoding="utf-8") as f:
+        #     students = json.load(f)
+        #     for s in students:
+        #         stud = Student(first_name=s['first_name'], last_name=s['last_name'], gender=s['gender'],
+        #                        address=s['address'],
+        #                        phone_number=s['phone_number'], email=s['email'], avatar=s['avatar'])
+        #         db.session.add(stud)
+        #     db.session.commit()
 
-        import hashlib
-        u = User(first_name='', username='admin',
-                 password=str(hashlib.md5("123456".encode('utf-8')).hexdigest()),
-                 user_role=UserRole.ADMIN, is_supervisor=True)
-        admin = Admin(user_id=u.get_id())
-        db.session.add(u)
-        db.session.add(admin)
-        p1 = Period(semester=Semester.SEMESTER_1, year="2023-2024")
-        p2 = Period(semester=Semester.SEMESTER_2, year="2023-2024")
-        db.session.add_all([p1, p2])
+        # import hashlib
+        # u = User(first_name='', username='admin',
+        #          password=str(hashlib.md5("123456".encode('utf-8')).hexdigest()),
+        #          user_role=UserRole.ADMIN, is_supervisor=True)
+
+        # u2 = User(username='kiet', user_role=UserRole.TEACHER, is_supervisor=False, first_name='Kiet',
+        #           last_name='Nguyen',
+        #           gender=UserGender.MALE, address='HCM', phone_number='0923740834', email='kiet@gmail.com',
+        #           avatar='https://res-console.cloudinary.com/dwdvnztnn/thumbnails/v1/image/upload/v1715050270/c3Vwcl9jYXRfZ3l0eGR5/drilldown',
+        #           password=str(hashlib.md5("123456".encode('utf-8')).hexdigest()))
+        #
+        # db.session.add(u2)
+        # db.session.commit()
+
+        # c1 = Class(name='10A2', grade=StudentGrade.GRADE_10TH)
+        # c2 = Class(name='10B1', grade=StudentGrade.GRADE_10TH)
+        # c3 = Class(name='10C1', grade=StudentGrade.GRADE_10TH)
+        # c4 = Class(name='11A2', grade=StudentGrade.GRADE_11ST)
+        # c5 = Class(name='11B3', grade=StudentGrade.GRADE_11ST)
+        # c6 = Class(name='11C1', grade=StudentGrade.GRADE_11ST)
+        # c7 = Class(name='12A2', grade=StudentGrade.GRADE_12ND)
+        # c8 = Class(name='12B3', grade=StudentGrade.GRADE_12ND)
+        # c9 = Class(name='12C2', grade=StudentGrade.GRADE_12ND)
+        #
+        # db.session.add_all([c1, c2, c3, c4, c5, c6, c7, c8, c9])
+        # db.session.commit()
+
+        # teacher = Teacher(qualification="Tiến sĩ", user_id=4)
+        # db.session.add(teacher)
+        # db.session.commit()
+
+        # subj1 = Subject(name='Toán 10', grade=StudentGrade.GRADE_10TH, exam_15mins=2, exam_45mins=1)
+        # subj2 = Subject(name='Toán 11', grade=StudentGrade.GRADE_11ST, exam_15mins=2, exam_45mins=1)
+        # subj3 = Subject(name='Toán 12', grade=StudentGrade.GRADE_12ND, exam_15mins=2, exam_45mins=1)
+        #
+        # subj4 = Subject(name='Sinh 10', grade=StudentGrade.GRADE_10TH, exam_15mins=2, exam_45mins=1)
+        # subj5 = Subject(name='Sinh 11', grade=StudentGrade.GRADE_11ST, exam_15mins=2, exam_45mins=1)
+        # subj6 = Subject(name='Sinh 12', grade=StudentGrade.GRADE_12ND, exam_15mins=2, exam_45mins=1)
+        #
+        # subj7 = Subject(name='Văn 10', grade=StudentGrade.GRADE_10TH, exam_15mins=2, exam_45mins=1)
+        # subj8 = Subject(name='Văn 11', grade=StudentGrade.GRADE_11ST, exam_15mins=2, exam_45mins=1)
+        # subj9 = Subject(name='Văn 12', grade=StudentGrade.GRADE_12ND, exam_15mins=2, exam_45mins=1)
+        # db.session.add_all([subj1, subj2, subj3, subj4, subj5, subj6, subj7, subj8, subj9])
+        # db.session.commit()
+
+        # p1 = Period(semester=Semester.SEMESTER_1, year='2023-2024')
+        # p2 = Period(semester=Semester.SEMESTER_2, year='2023-2024')
+        # db.session.add_all([p1,p2])
+        # db.session.commit()
+
+        # ft = FormTeacher(teacher_id=1, class_id=1, period_id=1)
+        # ft1 = FormTeacher(teacher_id=1, class_id=1, period_id=2)
+        # db.session.add_all([ft, ft1])
+        # db.session.commit()
+
+        # thêm học sinh vào lớp
+        # sc = StudentClass(student_id=3, class_id=1)
+        # sc1 = StudentClass(student_id=4, class_id=1)
+        # sc2 = StudentClass(student_id=5, class_id=1)
+        # sc3 = StudentClass(student_id=6, class_id=1)
+        # sc4 = StudentClass(student_id=7, class_id=1)
+        # sc5 = StudentClass(student_id=8, class_id=1)
+        # sc6 = StudentClass(student_id=9, class_id=1)
+        # sc7 = StudentClass(student_id=10, class_id=1)
+        # sc8 = StudentClass(student_id=11, class_id=1)
+        # sc9 = StudentClass(student_id=12, class_id=1)
+        #
+        # db.session.add_all([sc, sc1, sc2, sc3, sc4, sc5, sc6, sc7, sc8, sc9])
+        # db.session.commit()
+
+        # sc = StudentClass(student_id=13, class_id=2)
+        # sc1 = StudentClass(student_id=14, class_id=2)
+        # sc2 = StudentClass(student_id=15, class_id=2)
+        # sc3 = StudentClass(student_id=16, class_id=2)
+        # sc4 = StudentClass(student_id=17, class_id=2)
+        # sc5 = StudentClass(student_id=18, class_id=2)
+        # sc6 = StudentClass(student_id=19, class_id=2)
+        # sc7 = StudentClass(student_id=20, class_id=2)
+        # sc8 = StudentClass(student_id=21, class_id=2)
+        # sc9 = StudentClass(student_id=22, class_id=2)
+        #
+        # db.session.add_all([sc, sc1, sc2, sc3, sc4, sc5, sc6, sc7, sc8, sc9])
+        # db.session.commit()
+
+        # thêm dữ liệu lớp teach
+        # t = Teach(teacher_id=1, subject_id=1, class_id=1, period_id=1)
+        # t1 = Teach(teacher_id=1, subject_id=1, class_id=1, period_id=2)
+        # t2 = Teach(teacher_id=1, subject_id=1, class_id=10, period_id=1)
+        # t3 = Teach(teacher_id=1, subject_id=1, class_id=10, period_id=2)
+        # db.session.add_all([t, t1, t2, t3])
+        # db.session.commit()
+
+        t = Teach(teacher_id=2, subject_id=4, class_id=2, period_id=1)
+        t1 = Teach(teacher_id=2, subject_id=4, class_id=2, period_id=2)
+
+        db.session.add_all([t, t1])
         db.session.commit()
