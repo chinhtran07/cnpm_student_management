@@ -1,4 +1,5 @@
-from sqlalchemy import Column, String, Float, Integer, ForeignKey, Enum, Boolean, DateTime, event, func
+from sqlalchemy import Column, String, Float, Integer, ForeignKey, Enum, Boolean, DateTime, event, func, \
+    UniqueConstraint
 from sqlalchemy.orm import relationship, validates
 from studentManagement import db, app
 from flask_login import UserMixin
@@ -89,13 +90,17 @@ class Employee(Base):
 
 
 class Period(Base):
-    semester = Column(Enum(Semester))
+    semester = Column(Enum(Semester),)
     year = Column(String(4))
     teach = relationship('Teach', backref='period', lazy=True)
     form_teacher = relationship('FormTeacher', backref='period', uselist=False, lazy=True)
+    student_class = relationship('StudentClass', backref='period', lazy=True)
+    __table_args__ = (
+        UniqueConstraint('semester', 'year', name='unique_semester_year'),
+    )
 
     def __str__(self):
-        return f'{self.semester} {self.year}'
+        return f'{"Học kì 1" if self.semester == Semester.SEMESTER_1 else "Học kì 2"} {self.year}'
 
 
 class Class(Base):
@@ -152,6 +157,7 @@ class Policy(Base):
 class StudentClass(Base):
     student_id = Column(Integer, ForeignKey(Student.id))
     class_id = Column(Integer, ForeignKey(Class.id))
+    period_id = Column(Integer, ForeignKey(Period.id))
 
 
 if __name__ == '__main__':
@@ -162,6 +168,10 @@ if __name__ == '__main__':
         u = User(first_name='', username='admin',
                  password=str(hashlib.md5("123456".encode('utf-8')).hexdigest()),
                  user_role=UserRole.ADMIN, is_supervisor=True)
-
+        admin = Admin(user_id=u.get_id())
         db.session.add(u)
+        db.session.add(admin)
+        p1 = Period(semester=Semester.SEMESTER_1, year="2023-2024")
+        p2 = Period(semester=Semester.SEMESTER_2, year="2023-2024")
+        db.session.add_all([p1, p2])
         db.session.commit()

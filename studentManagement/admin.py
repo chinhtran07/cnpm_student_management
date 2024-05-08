@@ -1,6 +1,7 @@
 import hashlib
+from datetime import datetime
 
-from flask import redirect
+from flask import redirect, request
 from flask_admin import Admin, BaseView, expose, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
 from flask_login import current_user, logout_user
@@ -20,8 +21,9 @@ class AuthenticatedView(ModelView):
 class HomeView(AdminIndexView):
     @expose('/')
     def index(self):
-        period = dao.get_most_recent_period()
-        return self.render('admin/index.html', period=period)
+        amount_of_students_by_period = dao.stats_amount_of_students_by_period(semester=request.args.get('semester'),
+                                                                              year=request.args.get('year', datetime.now().year))
+        return self.render('admin/index.html', amount_of_students_by_period=amount_of_students_by_period)
 
     def is_accessible(self):
         return True

@@ -1,13 +1,25 @@
 import hashlib
+from datetime import datetime
 
-from sqlalchemy import desc
+from sqlalchemy import desc, func
 
 from studentManagement import db
-from studentManagement.models import User, Student, Period, StudentClass, Policy
+from studentManagement.models import User, Student, Period, StudentClass, Policy, Class, Semester
 
 
-def get_most_recent_period():
-    return Period.query.order_by(desc(Period.id)).first()
+def get_period(semester, year):
+    return db.session.query(Period).filter_by(semester=semester, year=year).first()
+
+
+def stats_amount_of_students_by_period(semester=Semester.SEMESTER_1, year=datetime.now().year):
+    period = get_period(semester, year)
+    query = (db.session.query(Class.name, func.count(StudentClass.student_id))
+             .join(StudentClass)
+             .filter(StudentClass.period_id == period.id)
+             .group_by(Class.name)
+             )
+
+    return query.all()
 
 
 def get_user_by_id(id):
