@@ -1,4 +1,5 @@
 import hashlib
+import pdb
 from datetime import datetime
 
 from flask import redirect, request
@@ -10,7 +11,7 @@ from wtforms.fields.numeric import IntegerField
 from wtforms.fields.simple import StringField
 
 from studentManagement import app, db, dao
-from studentManagement.models import Subject, Policy, UserRole, User, Teacher, Employee, Period
+from studentManagement.models import Subject, Policy, UserRole, User, Teacher, Employee, Period, Semester
 
 
 class AuthenticatedView(ModelView):
@@ -21,7 +22,7 @@ class AuthenticatedView(ModelView):
 class HomeView(AdminIndexView):
     @expose('/')
     def index(self):
-        amount_of_students_by_period = dao.stats_amount_of_students_by_period(semester=request.args.get('semester'),
+        amount_of_students_by_period = dao.stats_amount_of_students_by_period(semester=request.args.get('semester', Semester.SEMESTER_1.name),
                                                                               year=request.args.get('year', datetime.now().year))
         return self.render('admin/index.html', amount_of_students_by_period=amount_of_students_by_period)
 
@@ -64,6 +65,16 @@ class MyPolicyView(AuthenticatedView):
     column_list = ['id', 'content', 'data']
 
 
+class PeriodView(AuthenticatedView):
+    column_list = ['id', 'semester', 'year']
+    column_filters = ['year']
+    column_sortable_list = ['year']
+    column_labels = {
+        'semester': 'Học kỳ',
+        'year': 'Năm học'
+    }
+
+
 class StatsView(BaseView):
     @expose('/')
     def index(self):
@@ -83,9 +94,10 @@ class LogoutView(BaseView):
         return current_user.is_authenticated
 
 
-admin = Admin(app, index_view=HomeView(), name="Student Management System", template_mode='bootstrap4')
+admin = Admin(app, index_view=HomeView(), name="Hệ thống quản trị học sinh", template_mode='bootstrap4')
 admin.add_view(UserView(User, db.session))
 admin.add_view(MySubjectView(Subject, db.session))
 admin.add_view(MyPolicyView(Policy, db.session))
-admin.add_view(StatsView(name='Statistics'))
-admin.add_view(LogoutView(name='Log out'))
+admin.add_view(PeriodView(Period, db.session))
+admin.add_view(StatsView(name='Thống kê'))
+admin.add_view(LogoutView(name='Đăng xuất'))

@@ -4,27 +4,47 @@
 {% if current_user.is_authenticated %}
 <h1 class="text-info text-center">CHÀO MỪNG BẠN ĐẾN TRANG QUẢN TRỊ!</h1>
 <div class="row">
-    <div class="col-sm-5">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Total students</h5>
-                <p class="card-text fs-2 text fw-bold"> 300 </p>
+    <div class="col-md-4 col-12">
+        <form class="mb-2">
+            <div class="row">
+                <div class="col-md-4">
+                    <label for="sems" class="form-label">Học kỳ:</label>
+                    <br/>
+                    <select class="form-select form-select-lg p-2" id="sems" name="semester">
+                        <option value="SEMESTER_1">Học kỳ 1</option>
+                        <option value="SEMESTER_2">Học kỳ 2</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="year" class="form-label">Năm học:</label>
+                    <input id="year" name="year" type="text" class="form-control" placeholder="2024" required>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary ">Lọc</button>
+                </div>
             </div>
-            <div class="card-footer">
-                <h5>Semester 1</h5>
-            </div>
-        </div>
+        </form>
+        <table class="table table-bordered">
+            <thead class="table-primary">
+            <tr>
+                <th>Tên lớp</th>
+                <th>Sĩ số
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for name, amounts in amount_of_students_by_period %}
+            <tr>
+                <td>{{ name }}</td>
+                <td>{{ amounts}}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
-    <div class="col-sm-5">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Số lượng học sinh</h5>
-                <p class="card-text fs-2 text fw-bold">{{ amount_students }}</p>
-            </div>
-            <div class="card-footer">
-                <h5>{{ period }}</h5>
-            </div>
-        </div>
+    <div class="col-md-6 col-12">
+        <h4 class="text-center">Thống kê số lượng học sinh</h4>
+        <canvas id="myChart"></canvas>
     </div>
     <div class="col-sm-2">
         <div class="card" style="width:150px">
@@ -32,11 +52,25 @@
                  src="https://th.bing.com/th/id/R.dbc8e6138b38860cee6899eabc67df45?rik=hZCUMR4xQ%2btlBA&pid=ImgRaw&r=0"
                  style="width:100px" alt="Card image">
             <div class="card-body">
-                <h4 class="card-title">{{current_user.first_name}}</h4>
+                <h4 class="card-title"> {{current_user.last_name}} {{current_user.first_name}}</h4>
+                <h4 class="card-title">Quản trị viên</h4>
             </div>
         </div>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='js/stats.js') }}"></script>
+<script>
+    let labels = [];
+    let data = [];
+    {% for name, amounts in amount_of_students_by_period %}
+        data.push({{ amounts }});
+        labels.push('{{ name }}');
+    {% endfor %}
+    window.onload = function() {
+        drawChart("pie", data, labels);
+    }
+</script>
 {% else %}
 <div class="container-fluid ">
     <form method="post" action="/admin-login">
@@ -67,4 +101,5 @@
     </form>
 </div>
 {% endif %}
+
 {% endblock %}

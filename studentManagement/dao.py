@@ -1,4 +1,5 @@
 import hashlib
+import pdb
 from datetime import datetime
 
 from sqlalchemy import desc, func, select
@@ -7,20 +8,21 @@ from studentManagement import db, app
 from studentManagement.models import User, Student, Period, StudentClass, Policy, Class, Semester, Teach, Teacher
 
 
-
 def get_period(semester, year):
     return db.session.query(Period).filter_by(semester=semester, year=year).first()
 
 
-def stats_amount_of_students_by_period(semester=Semester.SEMESTER_1, year=datetime.now().year):
+def stats_amount_of_students_by_period(semester=Semester.SEMESTER_1.name, year=datetime.now().year.__str__()):
     period = get_period(semester, year)
-    query = (db.session.query(Class.name, func.count(StudentClass.student_id))
-             .join(StudentClass)
-             .filter(StudentClass.period_id == period.id)
-             .group_by(Class.name)
-             )
-
-    return query.all()
+    if period:
+        query = (db.session.query(Class.name, func.count(StudentClass.student_id))
+                 .join(StudentClass)
+                 .filter(StudentClass.period_id == period.id)
+                 .group_by(Class.name)
+                 )
+        return query.all()
+    else:
+        return []
 
 
 def get_user_by_id(id):
