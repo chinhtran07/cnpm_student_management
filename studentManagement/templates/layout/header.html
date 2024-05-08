@@ -1,3 +1,4 @@
+
 <nav class="navbar navbar-expand-sm bg-light navbar-light fixed-top">
     <div class="container-fluid">
         <ul class="navbar-nav">
@@ -7,9 +8,26 @@
                          alt="School" style="width:40px">
                 </a>
             </li>
+
+
+
+            {% if current_user.user_role|string() == "UserRole.TEACHER" %}
             <li class="nav-item">
-                <a class="nav-link active" href="#">Trang chủ</a>
+                <a class="nav-link active" href="/TEACHER">Trang chủ</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/TEACHER?grade=10">Khối 10</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/TEACHER?grade=11">Khối 11</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/TEACHER?grade=12">Khối 12</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/TEACHER/scoreManagement">Quản lý điểm</a>
+            </li>
+            {% else %}
             <li class="nav-item">
                 <a class="nav-link" href="#">Điều chỉnh quy định</a>
             </li>
@@ -19,6 +37,7 @@
             <li class="nav-item">
                 <a class="nav-link" href="#">Quản lý môn học</a>
             </li>
+            {% endif %}
         </ul>
     </div>
 </nav>

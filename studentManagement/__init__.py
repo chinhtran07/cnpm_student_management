@@ -15,6 +15,6 @@ app.config["PAGE_SIZE"] = 6
 db = SQLAlchemy(app)
 login = LoginManager(app)
 
-cloudinary.config(cloud_name='',
-                  api_key='',
-                  api_secret='')
+cloudinary.config(cloud_name='dwdvnztnn',
+                  api_key='571438538929217',
+                  api_secret='ZdK569SSxGMgAcDKPwatx2Lores')
