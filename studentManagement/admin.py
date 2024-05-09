@@ -22,8 +22,9 @@ class AuthenticatedView(ModelView):
 class HomeView(AdminIndexView):
     @expose('/')
     def index(self):
-        amount_of_students_by_period = dao.stats_amount_of_students_by_period(semester=request.args.get('semester', Semester.SEMESTER_1.name),
-                                                                              year=request.args.get('year', datetime.now().year))
+        amount_of_students_by_period = dao.stats_amount_of_students_by_period(
+            semester=request.args.get('semester', Semester.SEMESTER_1.name),
+            year=request.args.get('year', datetime.now().year))
         return self.render('admin/index.html', amount_of_students_by_period=amount_of_students_by_period)
 
     def is_accessible(self):
@@ -78,7 +79,18 @@ class PeriodView(AuthenticatedView):
 class StatsView(BaseView):
     @expose('/')
     def index(self):
-        return self.render('admin/stats.html')
+        subjects = dao.get_subjects()
+        years = dao.get_years()
+        counts_students_of_classes = dao.count_students_of_classes_by_subject_and_period(
+            subject_id=request.args.get('subjectId'),
+            semester=request.args.get('semester'),
+            year=request.args.get('year'))
+        stats_with_avg = dao.count_students_of_classes_by_subject_and_period(subject_id=request.args.get('subjectId'),
+                                                                             semester=request.args.get('semester'),
+                                                                             year=request.args.get('year'),
+                                                                             avg_gt_or_equal_to=5)
+        combine = counts_students_of_classes + stats_with_avg
+        return self.render('admin/stats.html', subjects=subjects, years=years, stats=combine)
 
     def is_accessible(self):
         return current_user.is_authenticated and current_user.user_role == UserRole.ADMIN

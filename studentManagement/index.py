@@ -23,8 +23,6 @@ def login_my_user():
         password = request.form.get('password')
         role = request.form.get('role')
 
-        print(role)
-
         user = dao.auth_user(username=username, password=password, role=role)
         if user:
             login_user(user)
@@ -78,7 +76,7 @@ def teacher():
     teacher = dao.get_teacher_id(current_user.id)
     for t in teacher:
         id = t.id
-    teach_class = dao.get_teach_class(teacher_id=id)
+        teach_class = dao.get_teach_class(teacher_id=id)
 
     return render_template('teacher.html', classes=classes,
                            pages=math.ceil(total_class / 4), teach_class=teach_class)

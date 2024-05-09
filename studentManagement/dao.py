@@ -5,7 +5,8 @@ from datetime import datetime
 from sqlalchemy import desc, func, select
 
 from studentManagement import db, app
-from studentManagement.models import User, Student, Period, StudentClass, Policy, Class, Semester, Teach, Teacher
+from studentManagement.models import User, Student, Period, StudentClass, Policy, Class, Semester, Teach, Teacher, \
+    Subject, Score, ScoreDetail
 
 
 def get_period(semester, year):
@@ -137,8 +138,53 @@ def get_teacher_id(user_id=None):
     return query.all()
 
 
+def get_subjects():
+    return db.session.query(Subject).all()
+
+
+def get_years():
+    query = db.session.query(Period.year).all()
+    years = {year[0] for year in query}
+    return years
+
+
+def count_students_of_classes_by_subject_and_period(subject_id, semester, year, avg_gt_or_equal_to=None):
+    period = get_period(semester=semester, year=year)
+    if not period:
+        return []
+
+    # Base query to retrieve classes and count of students
+    base_query = (
+        db.session.query(Class.id, Class.name, func.count(Student.id))
+        .join(Teach)
+        .join(Period)
+        .join(StudentClass, Class.id == StudentClass.class_id, isouter=True)
+        .join(Student, isouter=True)
+        .filter(Teach.subject_id == subject_id, Period.id == period.id)
+        .group_by(Class.id)
+    )
+
+    # If average score condition is provided, add it to the query
+    if avg_gt_or_equal_to is not None:
+        base_query = (
+            base_query.join(Score, (Student.id == Score.student_id) & (Score.subject_id == Teach.subject_id))
+            .join(ScoreDetail, Score.score_detail_id == ScoreDetail.id)
+            .having(func.avg(ScoreDetail.score) >= avg_gt_or_equal_to)
+        )
+
+    return base_query.all()
+
+
 if __name__ == '__main__':
     with app.app_context():
-        test = get_teacher_id(user_id=3)
-        for t in test:
-            print(t.id)
+        # pass
+        # subjects = get_subjects()
+        # for subject in subjects:
+        #     print(subject.name)
+
+        # years = get_years()
+        # for year in years:
+        #     print(year)
+
+        stats = count_students_of_classes_by_subject_and_period(subject_id=1, semester=Semester.SEMESTER_1.name, year='2024') + count_students_of_classes_by_subject_and_period(subject_id=1, semester=Semester.SEMESTER_1.name, year='2024', avg_gt_or_equal_to=5)
+        print(stats)
