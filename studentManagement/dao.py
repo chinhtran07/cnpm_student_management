@@ -175,9 +175,13 @@ def count_students_of_classes_by_subject_and_period(subject_id, semester, year, 
     return base_query.all()
 
 
+def get_subject_by_id(subject_id):
+    return Subject.query.get(subject_id)
+
+
 if __name__ == '__main__':
     with app.app_context():
-        # pass
+        pass
         # subjects = get_subjects()
         # for subject in subjects:
         #     print(subject.name)
@@ -185,6 +189,3 @@ if __name__ == '__main__':
         # years = get_years()
         # for year in years:
         #     print(year)
-
-        stats = count_students_of_classes_by_subject_and_period(subject_id=1, semester=Semester.SEMESTER_1.name, year='2024') + count_students_of_classes_by_subject_and_period(subject_id=1, semester=Semester.SEMESTER_1.name, year='2024', avg_gt_or_equal_to=5)
-        print(stats)

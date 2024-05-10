@@ -76,6 +76,24 @@ class PeriodView(AuthenticatedView):
     }
 
 
+def combined_data(counts_students_of_classes, stats_with_avg):
+    combined_data = {}
+
+    # Combine counts_students_of_classes into the combined_data dictionary
+    for c in counts_students_of_classes:
+        combined_data[c[0]] = (c[0], c[1], c[2], None)
+
+    # Update combined_data with the counts from stats_with_avg
+    for s in stats_with_avg:
+        if s[0] in combined_data:
+            combined_data[s[0]] = (s[0], combined_data[s[0]][1], combined_data[s[0]][2], s[2])
+
+    # Convert the combined_data dictionary to a list of tuples
+    combined_data_list = list(combined_data.items())
+
+    return combined_data_list
+
+
 class StatsView(BaseView):
     @expose('/')
     def index(self):
@@ -89,8 +107,12 @@ class StatsView(BaseView):
                                                                              semester=request.args.get('semester'),
                                                                              year=request.args.get('year'),
                                                                              avg_gt_or_equal_to=5)
-        combine = counts_students_of_classes + stats_with_avg
-        return self.render('admin/stats.html', subjects=subjects, years=years, stats=combine)
+        stats = combined_data(counts_students_of_classes=counts_students_of_classes, stats_with_avg=stats_with_avg)
+        subject = dao.get_subject_by_id(subject_id=request.args.get('subjectId'))
+        period = dao.get_period(semester=request.args.get('semester'), year=request.args.get('year'))
+        return self.render('admin/stats.html', subjects=subjects, years=years,
+                           stats=stats,
+                           subject=subject, period=period)
 
     def is_accessible(self):
         return current_user.is_authenticated and current_user.user_role == UserRole.ADMIN

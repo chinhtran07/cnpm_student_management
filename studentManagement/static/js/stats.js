@@ -20,3 +20,4 @@ function drawChart(type, data, labels, id="myChart", title='# Số lượng') {
     }
   });
 }
+
