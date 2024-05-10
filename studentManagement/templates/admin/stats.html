@@ -42,11 +42,11 @@
                 <th colspan="2"> Môn học: {{ subject.name }}</th>
                 <th colspan="2"> Học kỳ:
                     {% if period %}
-                        {% if period.semester.name.__eq__('SEMESTER_1') %}
-                        Học kỳ 1
-                        {% else %}
-                        Học kỳ 2
-                        {% endif %}
+                    {% if period.semester.name.__eq__('SEMESTER_1') %}
+                    Học kỳ 1
+                    {% else %}
+                    Học kỳ 2
+                    {% endif %}
                     {% endif %}
                 </th>
                 <th>Năm học: {{period.year}}</th>
@@ -67,9 +67,16 @@
                 <td>{{s[1][2]}}</td>
                 <td>
                     {% if s[1][3]%}
-                        {{s[1][3]}}
+                    {{s[1][3]}}
                     {% else %}
-                        0
+                    0
+                    {% endif %}
+                </td>
+                <td>
+                    {% if s[1][4]%}
+                    {{s[1][4]}}%
+                    {% else %}
+                    0 %
                     {% endif %}
                 </td>
             </tr>

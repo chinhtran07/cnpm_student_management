@@ -86,7 +86,8 @@ def combined_data(counts_students_of_classes, stats_with_avg):
     # Update combined_data with the counts from stats_with_avg
     for s in stats_with_avg:
         if s[0] in combined_data:
-            combined_data[s[0]] = (s[0], combined_data[s[0]][1], combined_data[s[0]][2], s[2])
+            combined_data[s[0]] = (
+                s[0], combined_data[s[0]][1], combined_data[s[0]][2], s[2], (s[2] / combined_data[s[0]][2])*100)
 
     # Convert the combined_data dictionary to a list of tuples
     combined_data_list = list(combined_data.items())
@@ -129,9 +130,9 @@ class LogoutView(BaseView):
 
 
 admin = Admin(app, index_view=HomeView(), name="Hệ thống quản trị học sinh", template_mode='bootstrap4')
-admin.add_view(UserView(User, db.session))
-admin.add_view(MySubjectView(Subject, db.session))
-admin.add_view(MyPolicyView(Policy, db.session))
-admin.add_view(PeriodView(Period, db.session))
+admin.add_view(UserView(User, db.session, name='Quản lý người dùng'))
+admin.add_view(MySubjectView(Subject, db.session, name='Quản lý môn học'))
+admin.add_view(MyPolicyView(Policy, db.session, name='Chỉnh sửa quy định'))
+admin.add_view(PeriodView(Period, db.session, name='Quản lý học kỳ'))
 admin.add_view(StatsView(name='Thống kê'))
 admin.add_view(LogoutView(name='Đăng xuất'))
