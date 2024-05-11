@@ -6,17 +6,15 @@ from flask_login import login_user, current_user, logout_user, login_required
 
 from studentManagement import app, dao, login
 from studentManagement.decorators import logged_in
+from studentManagement.models import UserRole
 
 
 @app.route('/')
 def index():
-    if current_user.is_authenticated:
-        return render_template("index.html")
     return redirect("/login")
 
 
 @app.route("/login", methods=['get', 'post'])
-@logged_in
 def login_my_user():
     err_msg = ''
     if request.method.__eq__('POST'):
@@ -24,14 +22,11 @@ def login_my_user():
         password = request.form.get('password')
         role = request.form.get('role')
 
-        print(role)
-
         user = dao.auth_user(username=username, password=password, role=role)
         if user:
             login_user(user)
 
-            next = request.args.get('next')
-            url = "/" + role
+            url = "/" + role.lower()
             return redirect(next if next else url)
         else:
             err_msg = 'Username hoặc password không đúng!'
@@ -41,9 +36,10 @@ def login_my_user():
 
 @app.route("/admin-login", methods=['post'])
 def process_admin_login():
+    err_msg = ''
     username = request.form.get('username')
     password = request.form.get('password')
-    u = dao.auth_user(username=username, password=password)
+    u = dao.auth_user(username=username, password=password, role=UserRole.ADMIN)
     if u:
         login_user(user=u)
 
@@ -61,12 +57,12 @@ def load_user(user_id):
     return dao.get_user_by_id(user_id)
 
 
-@app.route('/EMPLOYEE')
+@app.route('/employee')
 def employee():
     return render_template("index.html")
 
 
-@app.route('/TEACHER')
+@app.route('/teacher')
 def teacher():
     grade = request.args.get('grade')
     page = request.args.get("page")
@@ -78,18 +74,18 @@ def teacher():
     teacher = dao.get_teacher_id(current_user.id)
     for t in teacher:
         id = t.id
-    teach_class = dao.get_teach_class(teacher_id=id)
+        teach_class = dao.get_teach_class(teacher_id=id)
 
     return render_template('teacher.html', classes=classes,
                            pages=math.ceil(total_class / 4), teach_class=teach_class)
 
 
-@app.route('/TEACHER/scoreManagement')
+@app.route('/teacher/scoreManagement')
 def score_management():
     return render_template('scoreManagement.html')
 
 
-@app.route('/TEACHER/list_student')
+@app.route('/teacher/list_student')
 def list_student():
     class_id = request.args.get('class_id')
 

@@ -1,4 +1,5 @@
 import hashlib
+import pdb
 from datetime import datetime
 
 from flask import redirect, request
@@ -10,7 +11,7 @@ from wtforms.fields.numeric import IntegerField
 from wtforms.fields.simple import StringField
 
 from studentManagement import app, db, dao
-from studentManagement.models import Subject, Policy, UserRole, User, Teacher, Employee, Period
+from studentManagement.models import Subject, Policy, UserRole, User, Teacher, Employee, Period, Semester
 
 
 class AuthenticatedView(ModelView):
@@ -21,8 +22,9 @@ class AuthenticatedView(ModelView):
 class HomeView(AdminIndexView):
     @expose('/')
     def index(self):
-        amount_of_students_by_period = dao.stats_amount_of_students_by_period(semester=request.args.get('semester'),
-                                                                              year=request.args.get('year', datetime.now().year))
+        amount_of_students_by_period = dao.stats_amount_of_students_by_period(
+            semester=request.args.get('semester', Semester.SEMESTER_1.name),
+            year=request.args.get('year', datetime.now().year))
         return self.render('admin/index.html', amount_of_students_by_period=amount_of_students_by_period)
 
     def is_accessible(self):
@@ -64,10 +66,54 @@ class MyPolicyView(AuthenticatedView):
     column_list = ['id', 'content', 'data']
 
 
+class PeriodView(AuthenticatedView):
+    column_list = ['id', 'semester', 'year']
+    column_filters = ['year']
+    column_sortable_list = ['year']
+    column_labels = {
+        'semester': 'Học kỳ',
+        'year': 'Năm học'
+    }
+
+
+def combined_data(counts_students_of_classes, stats_with_avg):
+    combined_data = {}
+
+    # Combine counts_students_of_classes into the combined_data dictionary
+    for c in counts_students_of_classes:
+        combined_data[c[0]] = (c[0], c[1], c[2], None)
+
+    # Update combined_data with the counts from stats_with_avg
+    for s in stats_with_avg:
+        if s[0] in combined_data:
+            combined_data[s[0]] = (
+                s[0], combined_data[s[0]][1], combined_data[s[0]][2], s[2], (s[2] / combined_data[s[0]][2])*100)
+
+    # Convert the combined_data dictionary to a list of tuples
+    combined_data_list = list(combined_data.items())
+
+    return combined_data_list
+
+
 class StatsView(BaseView):
     @expose('/')
     def index(self):
-        return self.render('admin/stats.html')
+        subjects = dao.get_subjects()
+        years = dao.get_years()
+        counts_students_of_classes = dao.count_students_of_classes_by_subject_and_period(
+            subject_id=request.args.get('subjectId'),
+            semester=request.args.get('semester'),
+            year=request.args.get('year'))
+        stats_with_avg = dao.count_students_of_classes_by_subject_and_period(subject_id=request.args.get('subjectId'),
+                                                                             semester=request.args.get('semester'),
+                                                                             year=request.args.get('year'),
+                                                                             avg_gt_or_equal_to=5)
+        stats = combined_data(counts_students_of_classes=counts_students_of_classes, stats_with_avg=stats_with_avg)
+        subject = dao.get_subject_by_id(subject_id=request.args.get('subjectId'))
+        period = dao.get_period(semester=request.args.get('semester'), year=request.args.get('year'))
+        return self.render('admin/stats.html', subjects=subjects, years=years,
+                           stats=stats,
+                           subject=subject, period=period)
 
     def is_accessible(self):
         return current_user.is_authenticated and current_user.user_role == UserRole.ADMIN
@@ -83,9 +129,10 @@ class LogoutView(BaseView):
         return current_user.is_authenticated
 
 
-admin = Admin(app, index_view=HomeView(), name="Student Management System", template_mode='bootstrap4')
-admin.add_view(UserView(User, db.session))
-admin.add_view(MySubjectView(Subject, db.session))
-admin.add_view(MyPolicyView(Policy, db.session))
-admin.add_view(StatsView(name='Statistics'))
-admin.add_view(LogoutView(name='Log out'))
+admin = Admin(app, index_view=HomeView(), name="Hệ thống quản trị học sinh", template_mode='bootstrap4')
+admin.add_view(UserView(User, db.session, name='Quản lý người dùng'))
+admin.add_view(MySubjectView(Subject, db.session, name='Quản lý môn học'))
+admin.add_view(MyPolicyView(Policy, db.session, name='Chỉnh sửa quy định'))
+admin.add_view(PeriodView(Period, db.session, name='Quản lý học kỳ'))
+admin.add_view(StatsView(name='Thống kê'))
+admin.add_view(LogoutView(name='Đăng xuất'))
