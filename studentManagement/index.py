@@ -15,7 +15,6 @@ def index():
 
 
 @app.route("/login", methods=['get', 'post'])
-@logged_in
 def login_my_user():
     err_msg = ''
     if request.method.__eq__('POST'):
@@ -27,7 +26,6 @@ def login_my_user():
         if user:
             login_user(user)
 
-            next = request.args.get('next')
             url = "/" + role.lower()
             return redirect(next if next else url)
         else:
