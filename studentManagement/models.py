@@ -91,8 +91,10 @@ class Period(Base):
     semester = Column(Enum(Semester),)
     year = Column(String(4))
     teach = relationship('Teach', backref='period', lazy=True)
+    scores = relationship('Score', backref='period', lazy=True)
     form_teacher = relationship('FormTeacher', backref='period', uselist=False, lazy=True)
     student_class = relationship('StudentClass', backref='period', lazy=True)
+
     __table_args__ = (
         UniqueConstraint('semester', 'year', name='unique_semester_year'),
     )
@@ -143,6 +145,7 @@ class Score(Base):
     student_id = Column(Integer, ForeignKey(Student.id), nullable=False)
     subject_id = Column(Integer, ForeignKey(Subject.id), nullable=False)
     score_detail_id = Column(Integer, ForeignKey(ScoreDetail.id), nullable=False)
+    period_id = Column(Integer, ForeignKey(Period.id), nullable=False)
 
 
 class Policy(Base):

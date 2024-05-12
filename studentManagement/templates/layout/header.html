@@ -13,19 +13,19 @@
 
             {% if current_user.user_role|string() == "UserRole.TEACHER" %}
             <li class="nav-item">
-                <a class="nav-link active" href="/TEACHER">Trang chủ</a>
+                <a class="nav-link active" href="/teacher?page=1">Trang chủ</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/TEACHER?grade=10">Khối 10</a>
+                <a class="nav-link" href="/teacher?grade=10">Khối 10</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/TEACHER?grade=11">Khối 11</a>
+                <a class="nav-link" href="/teacher?grade=11">Khối 11</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/TEACHER?grade=12">Khối 12</a>
+                <a class="nav-link" href="/teacher?grade=12">Khối 12</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/TEACHER/scoreManagement">Quản lý điểm</a>
+                <a class="nav-link" href="/teacher/score_management">Quản lý điểm</a>
             </li>
             {% else %}
             <li class="nav-item">

@@ -1,0 +1,85 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+
+<h1 class="text-center text-primary ">BẢNG ĐIỂM</h1>
+
+<div class="mt-5 mb-3  d-flex justify-content-around">
+    <h4>Lớp: {{class_obj.name}}</h4>
+    <h4>Môn học: {{subject.name}}</h4>
+    {% if period.semester|string() == 'Semester.SEMESTER_1' %}
+    <h5>Học kỳ: &#8544;</h5>
+    {% else %}
+    <h5>Học kỳ: &#8545;</h5>
+    {% endif %}
+    <h5>Năm học: {{period.year}}</h5>
+</div>
+
+{% if students %}
+{% if total_score < total_score_input %}
+<div class="alert alert-danger">
+    <h3 class="text-danger text-center">Lớp này chưa được nhập đủ điểm </h3>
+    <p class="text-center">vui lòng thêm tại <a
+            href="/teacher/score_input?class_id={{class_obj.id}}&period={{period.id}}&subject_id={{subject.id}}">đây</a>
+    </p>
+</div>
+{% else %}
+<div class="container">
+    <div class="row">
+        <div class="col-5">
+            <table class="table ">
+                <tr>
+                    <th class="col-2">MSH</th>
+                    <th>Họ</th>
+                    <th>Tên</th>
+                </tr>
+                {% for s in students %}
+                <tr>
+                    <td class="col-2" style="height:50px">{{s.id}}</td>
+                    <td class="col-3">{{s.last_name}}</td>
+                    <td>{{s.first_name}}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="col-7">
+            <table class="table ">
+                <tr>
+                    {% for i in range(subject.exam_15mins) %}
+                    <th>Điểm 15p</th>
+                    {% endfor %}
+                    {% for i in range(subject.exam_45mins) %}
+                    <th>Điểm 1 tiết</th>
+                    {% endfor %}
+                    <th>Điểm thi</th>
+                    <th>Điểm trung bình</th>
+                </tr>
+
+                {% for s in range(students|length()) %}
+                <tr>
+                    {% for sc in scores %}
+                    {% if sc[3] == students[s].id and sc[2]|string() == 'ScoreType.EXAM_15MINS' %}
+                    <td style="height:50px">{{sc[1]}}</td>
+                    {% elif sc[3] == students[s].id and sc[2]|string() == 'ScoreType.EXAM_45MINS' %}
+                    <td style="height:50px">{{sc[1]}}</td>
+                    {% elif sc[3] == students[s].id and sc[2]|string() == 'ScoreType.EXAM_FINAL' %}
+                    <td style="height:50px">{{sc[1]}}</td>
+                    {% endif %}
+                    {% endfor %}
+                    <td style="height:50px">{{"{:,.1f}".format(list_avr[s])}}</td>
+                </tr>
+                {% endfor %}
+
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% else %}
+<div class="alert alert-danger">
+    <h3 class="text-danger text-center">Lớp này chưa có học sinh</h3>
+</div>
+{% endif %}
+
+
+{% endblock %}
