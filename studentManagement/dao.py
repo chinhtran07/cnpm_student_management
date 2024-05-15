@@ -3,7 +3,7 @@ import hashlib
 from sqlalchemy import desc
 
 from studentManagement import db
-from studentManagement.models import User, Student, Period, StudentClass, Policy
+from studentManagement.models import *
 
 
 def get_most_recent_period():
@@ -20,7 +20,7 @@ def add_user(name, username, password, avatar):
     db.session.add(u)
     db.session.commit()
 
-    
+
 def auth_user(username, password):
     password = str(hashlib.md5(password.strip().encode('utf-8')).hexdigest())
     return User.query.filter(User.username.__eq__(username.strip()),
@@ -47,3 +47,28 @@ def init_policy():
 
     # Commit changes to the database
     db.session.commit()
+
+
+########Staff function
+
+def add_student_info(first_name, last_name, gender, dob, address, phone_number, avatar):
+    new_student = Information(
+        first_name=first_name,
+        last_name=last_name,
+        gender=gender,
+        dob=dob,
+        address=address,
+        phone_number=phone_number,
+        avatar=avatar
+    )
+    db.session.add(new_student)
+    db.session.commit()
+
+
+def get_student():
+    total_student = Student.query.count()
+    return total_student
+
+
+def get_student_info(phone_number):
+    return Information.query.filter_by(phone_number=phone_number).first()
