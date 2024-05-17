@@ -4,6 +4,7 @@ from datetime import datetime
 
 from sqlalchemy import desc, func, select
 
+
 from studentManagement import db, app
 from studentManagement.models import User, Student, Period, StudentClass, Policy, Class, Semester, Teach, Teacher, \
     Subject, Score, ScoreDetail
@@ -37,6 +38,7 @@ def add_user(name, username, password, avatar):
     db.session.commit()
 
 
+
 def auth_user(username, password, role):
     password = str(hashlib.md5(password.strip().encode('utf-8')).hexdigest())
     return User.query.filter(User.username.__eq__(username.strip()),
@@ -66,6 +68,33 @@ def init_policy():
     db.session.commit()
 
 
+########Staff function
+
+def add_student_info(first_name, last_name, gender, dob, address, phone_number, avatar):
+    new_student = Information(
+        first_name=first_name,
+        last_name=last_name,
+        gender=gender,
+        dob=dob,
+        address=address,
+        phone_number=phone_number,
+        avatar=avatar
+    )
+    db.session.add(new_student)
+    db.session.commit()
+
+
+def get_student():
+    total_student = Student.query.count()
+    return total_student
+
+
+def get_student_info(phone_number):
+    return Information.query.filter_by(phone_number=phone_number).first()
+
+def get_subject():
+    all_subject = Subject.query.all()
+    return all_subject
 ########### Teacher function
 
 # lấy danh sách lớp
