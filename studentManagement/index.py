@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect
+from flask import redirect, request, render_template
 from flask_login import login_user, current_user, logout_user
 import math
 import pdb
@@ -114,7 +114,6 @@ def list_student():
 
 if __name__ == '__main__':
     with app.app_context():
-
         from studentManagement import admin
         dao.init_policy()
         app.run(debug=True)
