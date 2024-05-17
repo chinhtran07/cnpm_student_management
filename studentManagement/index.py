@@ -26,6 +26,7 @@ def login_my_user():
         if user:
             login_user(user)
 
+            next = request.args.get('next')
             url = "/" + role.lower()
             return redirect(next if next else url)
         else:

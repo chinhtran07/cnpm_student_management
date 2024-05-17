@@ -126,7 +126,7 @@ class LogoutView(BaseView):
         return redirect('/admin')
 
     def is_accessible(self):
-        return current_user.is_authenticated
+        return current_user.is_authenticated and current_user.user_role == UserRole.ADMIN
 
 
 admin = Admin(app, index_view=HomeView(), name="Hệ thống quản trị học sinh", template_mode='bootstrap4')
