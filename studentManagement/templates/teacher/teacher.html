@@ -4,11 +4,6 @@
 
 <h1 class="text-center text-primary ">TRANG CHỦ GIÁO VIÊN</h1>
 
-<!--Lọc lop mình dạy-->
-<div class="form-check form-switch ms-5">
-    <input class="form-check-input" type="checkbox" id="mySwitch" name="darkmode" value="yes" checked>
-    <label class="form-check-label" for="mySwitch">Lọc lớp</label>
-</div>
 
 <!--Phân trang-->
 {% if pages %}
@@ -21,9 +16,10 @@
 
 <!--Tìm kiếm tên lớp-->
 <form class="d-flex mt-3 ms-5 col-3">
-    <input class="form-control me-2 " type="text" name="class_name" placeholder="Nhập tên lớp...">
-    <button class="btn btn-primary" type="submit">Tìm</button>
+    <input class="form-control me-2" type="text" name="class_name" placeholder="Nhập tên lớp...">
+    <button class="btn btn-primary" type="submit">Lọc</button>
 </form>
+
 
 <div class="row container">
     <div class="col-md-10">
@@ -46,11 +42,15 @@
                     {% if c.id == t.Teach.class_id %}
                     {% if t.semester|string() == 'Semester.SEMESTER_1'%}
                     <div class="card-footer">
-                        <a class="btn btn-primary">Bảng điểm HK &#8544;</a>
+                        <a class="btn btn-primary"
+                           href="/teacher/score_table?class_id={{c.id}}&period={{t.Teach.period_id}}&subject_id={{t[6]}}">Bảng
+                            điểm HK &#8544; {{t[5]}}</a>
                     </div>
                     {% else %}
                     <div class="card-footer">
-                        <a class="btn btn-primary">Bảng điểm HK &#8545;</a>
+                        <a class="btn btn-primary"
+                           href="/teacher/score_table?class_id={{t[4]}}&period={{t.Teach.period_id}}&subject_id={{t[6]}}">Bảng
+                            điểm HK &#8545; {{t[5]}}</a>
                     </div>
                     {% endif %}
                     {% endif %}
@@ -80,4 +80,35 @@
         </div>
     </div>
 </div>
+
+<div class="row container">
+    <div class="col-md-10">
+        <div class="row">
+            {% for s in teach_subject %}
+
+            <div class="col-6 mt-5">
+                <div class="card ">
+                    <div class="card-header bg-success">
+
+                        <h5 class="text-light">Giáo viên môn:</h5>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{s.name}}</h5>
+                        <p>Mã môn: {{s.id}}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+
+        </div>
+    </div>
+</div>
+
+<script>
+    function submitForm (){
+       document.getElementById("myForm").submit()
+    }
+</script>
 {% endblock %}
+

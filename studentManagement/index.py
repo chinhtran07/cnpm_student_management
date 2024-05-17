@@ -5,7 +5,6 @@ from flask_login import login_user, current_user, logout_user
 import math
 import pdb
 
-
 from studentManagement import app, dao, login
 from studentManagement.decorators import logged_in
 from studentManagement.models import UserRole
@@ -81,8 +80,30 @@ def add_student():
 def get_subject():
     return render_template('employee/subject_managements.html', subjects=dao.get_subject())
 
+@app.route('/employee/add_student', methods=['GET', 'POST'])
+def add_student():
+    if request.method == 'POST':
+        first_name = request.form['first_name']
+        last_name = request.form['last_name']
+        gender = request.form['gender']
+        dob = request.form['dob']
+        address = request.form['address']
+        phone_number = request.form['phone_number']
+        avatar = request.form['avatar']
 
-@app.route('/teacher')
+        dao.add_student_info(first_name, last_name, gender, dob, address, phone_number, avatar)
+        student_info = dao.get_student_info(phone_number)
+        return render_template('employee/student_info.html', student_info=student_info)
+    else:
+        return render_template('employee/add_student.html')
+
+
+@app.route('/employee/subject_managements')
+def get_subject():
+    return render_template('employee/subject_managements.html', subjects=dao.get_subject())
+
+
+@app.route('/teacher', methods=['get', 'post'])
 def teacher():
     grade = request.args.get('grade')
     page = request.args.get("page")
@@ -148,7 +169,6 @@ def score_table():
                            subject=subject, period=period, students=students, scores=scores, total_score=total_score,
                            total_score_input=total_score_input, list_avr=list_avr)
 
-
 @app.route('/api/teacher/scores', methods=['post'])
 def add_to_scores():
     scores = session.get('scores')
@@ -199,6 +219,7 @@ def add_to_scores():
     return jsonify({'id': 4, 'message': "Thêm thành công", 'status': 200})
 
 
+
 @app.route('/api/teacher/save_scores', methods=['post'])
 def save_scores():
     subject_id = request.args.get('subject_id')
@@ -216,6 +237,17 @@ def save_scores():
             return jsonify({'status': 200})
 
     return jsonify({'status': 500})
+
+# Update score function
+@app.route('/teacher/api/update_score/<score_id>', methods=['put'])
+def update_score(score_id):
+    value = request.json['value']
+    try:
+        dao.update_score(score_id=score_id, value=value)
+    except Exception as ex:
+        print(ex)
+        return jsonify({'status': 500})
+    return jsonify({'status': 200})
 
 
 if __name__ == '__main__':

@@ -14,3 +14,4 @@ def logged_in(f):
         return f(*args, **kwargs)
 
     return decorated_function
+

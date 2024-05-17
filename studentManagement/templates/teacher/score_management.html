@@ -1,0 +1,80 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+
+<h1 class="text-center text-primary ">TRANG CHỦ QUẢN LÝ ĐIỂM</h1>
+
+
+<!--Tìm kiếm tên lớp-->
+<form class="d-flex mt-3 ms-5 col-3">
+    <input class="form-control me-2" type="text" name="class_name" placeholder="Nhập tên lớp...">
+    <button class="btn btn-primary" type="submit">Lọc</button>
+</form>
+
+
+<div class="row container">
+    <div class="col-md-10">
+        <div class="row">
+            {% for c in teach_class %}
+            <div class="col-md-6 mt-5">
+                <div class="card ">
+
+                    <div class="card-header bg-primary">
+                        <h4 class="card-title text-white">Lớp: {{c[3]}}</h4>
+                    </div>
+
+                    <div class="card-body">
+                        <h5 class="card-title">Môn học: {{c[5]}}</h5>
+                        <p>Mã lớp: {{c[4]}}</p>
+                    </div>
+                    {% if c.semester|string() == 'Semester.SEMESTER_1'%}
+                    <div class="card-footer">
+                        <a href="/teacher/score_table?class_id={{c[4]}}&period={{c[7]}}&subject_id={{c[6]}}"
+                           class="btn btn-danger">Xem bảng điểm HK &#8544;</a>
+                    </div>
+                    {% else %}
+                    <div class="card-footer">
+                        <a href="/teacher/score_table?class_id={{c[4]}}&period={{c[7]}}&subject_id={{c[6]}}"
+                           class="btn btn-danger">Xem bảng điểm HK &#8545;</a>
+                    </div>
+                    {% endif %}
+
+
+                    {% if c.semester|string() == 'Semester.SEMESTER_1'%}
+                    <div class="card-footer">
+                        <a class="btn btn-primary"
+                           href="/teacher/score_input?class_id={{c[4]}}&period={{c[7]}}&subject_id={{c[6]}}">Nhập
+                            điểm HK
+                            &#8544;</a>
+                    </div>
+                    {% else %}
+                    <div class="card-footer">
+                        <a class="btn btn-primary"
+                           href="/teacher/score_input?class_id={{c[4]}}&period={{c[7]}}&subject_id={{c[6]}}">Nhập
+                            điểm HK
+                            &#8545;</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
+    </div>
+
+    <div class="col-md-2 mt-5">
+        <div class="card justify-content-center " style="width:150px">
+            <img class="card-img-top "
+                 src="{{current_user.avatar}}"
+                 style="width:145px" alt="Card image">
+            <div class="card-body ">
+                <h4 class="card-title">{{current_user.first_name}}</h4>
+                <p class="card-text">Giáo viên</p>
+                <a href="/logout" class="btn btn-danger">Đăng xuất</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

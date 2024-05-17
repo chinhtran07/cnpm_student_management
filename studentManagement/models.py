@@ -50,7 +50,7 @@ class Information(Base):
     address = Column(String(100))
     phone_number = Column(String(11))
     email = Column(String(30), unique=True)
-    avatar = Column(String(255))
+    avatar = Column(String(255), default="https://th.bing.com/th/id/R.dbc8e6138b38860cee6899eabc67df45?rik=hZCUMR4xQ%2btlBA&pid=ImgRaw&r=0")
     is_active = Column(Boolean, default=True)
 
 
@@ -91,8 +91,10 @@ class Period(Base):
     semester = Column(Enum(Semester),)
     year = Column(String(4))
     teach = relationship('Teach', backref='period', lazy=True)
+    scores = relationship('Score', backref='period', lazy=True)
     form_teacher = relationship('FormTeacher', backref='period', uselist=False, lazy=True)
     student_class = relationship('StudentClass', backref='period', lazy=True)
+
     __table_args__ = (
         UniqueConstraint('semester', 'year', name='unique_semester_year'),
     )
@@ -143,6 +145,7 @@ class Score(Base):
     student_id = Column(Integer, ForeignKey(Student.id), nullable=False)
     subject_id = Column(Integer, ForeignKey(Subject.id), nullable=False)
     score_detail_id = Column(Integer, ForeignKey(ScoreDetail.id), nullable=False)
+    period_id = Column(Integer, ForeignKey(Period.id), nullable=False)
 
 
 class Policy(Base):
@@ -160,7 +163,7 @@ class StudentClass(Base):
 
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all()
+        # db.create_all()
         #
         # import json
         #
@@ -173,11 +176,11 @@ if __name__ == '__main__':
         #         db.session.add(stud)
         #     db.session.commit()
         #
-        # import hashlib
-        # u = User(first_name='', username='admin',
-        #          password=str(hashlib.md5("123456".encode('utf-8')).hexdigest()),
-        #          user_role=UserRole.ADMIN, is_supervisor=True)
-        # db.session.add(u)
+        import hashlib
+        u = User(first_name='', username='admin1',
+                 password=str(hashlib.md5("123456".encode('utf-8')).hexdigest()),
+                 user_role=UserRole.ADMIN, is_supervisor=True)
+        db.session.add(u)
         #
         # u2 = User(username='kiet', user_role=UserRole.TEACHER, is_supervisor=False, first_name='Kiet',
         #           last_name='Nguyen',
@@ -185,11 +188,11 @@ if __name__ == '__main__':
         #           avatar='https://res-console.cloudinary.com/dwdvnztnn/thumbnails/v1/image/upload/v1715050270/c3Vwcl9jYXRfZ3l0eGR5/drilldown',
         #           password=str(hashlib.md5("123456".encode('utf-8')).hexdigest()))
         #
+        admin = Admin(user_id=u.get_id())
         # db.session.add(u2)
-        # db.session.commit()
+        db.session.commit()
         #
         # teacher = Teacher(qualification="Tiến sĩ", user_id=u2.get_id())
-        # admin = Admin(user_id=u.get_id())
         # db.session.add_all([admin, teacher])
         # db.session.commit()
         # c1 = Class(name='10A2', grade=StudentGrade.GRADE_10TH)
