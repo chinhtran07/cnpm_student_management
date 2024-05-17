@@ -7,7 +7,7 @@ from sqlalchemy import desc, func, select
 
 from studentManagement import db, app
 from studentManagement.models import User, Student, Period, StudentClass, Policy, Class, Semester, Teach, Teacher, \
-    Subject, Score, ScoreDetail
+    Subject, Score, ScoreDetail, ScoreType
 
 
 def get_period(semester, year):
@@ -210,7 +210,7 @@ def str_to_enum(s):
 def get_score(student_id=None, subject_id=None, period_id=None, class_id=None, score_type=None):
     query = (Score.query.join(ScoreDetail, Score.score_detail_id == ScoreDetail.id).
              join(StudentClass, Score.student_id == StudentClass.student_id).
-             add_columns(ScoreDetail.score, ScoreDetail.type, Score.student_id))
+             add_columns(ScoreDetail.score, ScoreDetail.type, Score.student_id, ScoreDetail.id))
 
     if student_id:
         query = query.filter(Score.student_id.__eq__(student_id))
@@ -303,6 +303,15 @@ def get_average_scores(student_id=None, subject_id=None, period_id=None, class_i
 def get_teach_subject(teacher_id):
     query = Subject.query.join(Teach, Teach.subject_id == Subject.id).filter(Teach.teacher_id.__eq__(teacher_id))
     return query.all()
+
+def update_score (score_id, value = None):
+    query = ScoreDetail.query.get(score_id)
+
+    if value:
+        query.score = value
+
+    db.session.commit()
+
  #################################################
 
 def get_subjects():
@@ -348,11 +357,5 @@ def get_subject_by_id(subject_id):
 
 if __name__ == '__main__':
     with app.app_context():
-        pass
-        # subjects = get_subjects()
-        # for subject in subjects:
-        #     print(subject.name)
-
-        # years = get_years()
-        # for year in years:
-        #     print(year)
+        test = update_score(score_id=228, value=9)
+        # print(test.score)
