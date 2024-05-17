@@ -72,3 +72,7 @@ def get_student():
 
 def get_student_info(phone_number):
     return Information.query.filter_by(phone_number=phone_number).first()
+
+def get_subject():
+    all_subject = Subject.query.all()
+    return all_subject

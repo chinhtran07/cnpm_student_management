@@ -1,7 +1,6 @@
-import pdb
+from flask import render_template, request, redirect
+from flask_login import login_user, current_user, logout_user
 
-from flask import render_template, request, redirect, session
-from flask_login import login_user, current_user, logout_user, login_required
 
 from studentManagement import app, dao, login
 from studentManagement.decorators import logged_in
@@ -84,7 +83,12 @@ def add_student():
         student_info = dao.get_student_info(phone_number)
         return render_template('employee/student_info.html', student_info=student_info)
     else:
-        return render_template('employee/student_form.html')
+        return render_template('employee/add_student.html')
+
+
+@app.route('/employee/subject_managements')
+def get_subject():
+    return render_template('employee/subject_managements.html', subjects=dao.get_subject())
 
 
 @app.route('/teacher')
@@ -94,7 +98,5 @@ def teacher():
 
 if __name__ == '__main__':
     with app.app_context():
-        from studentManagement import admin
-
         dao.init_policy()
         app.run(debug=True)
