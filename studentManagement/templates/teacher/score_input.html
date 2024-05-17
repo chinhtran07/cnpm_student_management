@@ -1,0 +1,95 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+
+<h1 class="text-center text-primary ">NHẬP ĐIỂM</h1>
+
+
+<div class="mt-5 mb-3  d-flex justify-content-around">
+    <h4>Lớp: {{class_obj.name}}</h4>
+    <h4>Môn học: {{subject.name}}</h4>
+    {% if period.semester|string() == 'Semester.SEMESTER_1' %}
+    <h5>Học kỳ: &#8544;</h5>
+    {% else %}
+    <h5>Học kỳ: &#8545;</h5>
+    {% endif %}
+    <h5>Năm học: {{period.year}}</h5>
+</div>
+
+<div class="row">
+    <div class="col-2">
+        <form>
+            <div class="mb-3">
+                <label for="student" class="form-label">Chọn học sinh:</label>
+                <select class="form-select" id="student" name="student">
+                    {% for s in students %}
+                    <option value="{{s.id}}">{{s.last_name + " " + s.first_name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="score" class="form-label">Điểm số:</label>
+                <input type="number" class="form-control" id="score" placeholder="Nhập điểm" name="score" onblur="thongBao()">
+            </div>
+            <div class="mb-3 mt-3">
+                <label for="score_column" class="form-label">Chọn cột điểm:</label>
+                <select class="form-select" id="score_column" name="score_column">
+                    <option value="ScoreType.EXAM_15MINS">15 phút</option>
+                    <option value="ScoreType.EXAM_45MINS">45 phút</option>
+                    <option value="ScoreType.EXAM_FINAL">Điểm thi cuối kỳ</option>
+                </select>
+            </div>
+
+            <button type="button" class="btn btn-primary"
+                    onclick="addToScores(document.getElementById('score').value,
+                                        document.getElementById('score_column').value,
+                                        document.getElementById('student').value,
+                                        {{subject.id}},
+                                        {{class_obj.id}},
+                                        {{period.id}})"
+                    data-bs-toggle="tooltip" title="Thêm điểm tạm thời!">
+                Thêm điểm
+            </button>
+        </form>
+        <button class="btn btn-danger mb-3 mt-3" onclick="createScore({{subject.id}},{{period.id}})"
+                data-bs-toggle="tooltip" title="Lưu!">Lưu thông tin
+        </button>
+    </div>
+    {% if students %}
+    <div class="col-10">
+        <div class="row">
+            {% for s in students %}
+            <div class="card col-3 me-4 mb-3">
+                <div class="card-header bg-primary">
+                </div>
+                <div class="card-body ">
+                    <h6 class="card-title">{{s.last_name}} {{s.first_name}}</h6>
+                </div>
+                {% for sc in scores %}
+                {% if sc[3] == s.id and sc[2]|string() == 'ScoreType.EXAM_15MINS' %}
+                <p> Điểm 15p: {{sc[1]}}</p>
+                {% elif sc[3] == s.id and sc[2]|string() == 'ScoreType.EXAM_45MINS' %}
+                <p> Điểm 45p: {{sc[1]}}</p>
+                {% elif sc[3] == s.id and sc[2]|string() == 'ScoreType.EXAM_FINAL' %}
+                <p> Điểm thi: {{sc[1]}}</p>
+                {% endif %}
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <div class=" col-10 ">
+        <h3 class="text-center text-danger">Lớp học này chưa có học sinh</h3>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    function thongBao () {
+        if(document.getElementById('score').value > 10){
+            alert('Điểm bạn nhập không hợp lệ !')
+        }
+    }
+</script>
+{% endblock %}

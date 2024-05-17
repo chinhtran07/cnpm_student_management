@@ -96,9 +96,8 @@ def get_subject():
     all_subject = Subject.query.all()
     return all_subject
 ########### Teacher function
-
 # lấy danh sách lớp
-def load_class(grade=None, page=None, class_name=None):
+def load_class(grade=None, page=None, class_name=None, class_id=None):
     query = Class.query
 
     if grade:
@@ -116,6 +115,8 @@ def load_class(grade=None, page=None, class_name=None):
 
     if class_name:
         query = query.filter(Class.name.contains(class_name))
+    if class_id:
+        return query.filter(Class.id.__eq__(class_id)).first()
 
     return query.order_by('name').all()
 
@@ -141,7 +142,8 @@ def get_list_student(class_id=None):
                                                                                                 Student.id,
                                                                                                 Student.last_name,
                                                                                                 Student.gender,
-                                                                                                Student.address)
+                                                                                                Student.address,
+                                                                                                )
 
     if class_id:
         query = query.filter(StudentClass.class_id.__eq__(class_id))
@@ -149,14 +151,22 @@ def get_list_student(class_id=None):
     return query.all()
 
 
-# Lấy id những lớp có dạy
-def get_teach_class(teacher_id=None):
-    query = Teach.query.join(Period, Teach.period_id == Period.id).add_columns(Period.semester)
+# Lấy  những lớp có dạy
+def get_teach_class(teacher_id=None, class_name=None):
+    query = (Teach.query.join(Period, Teach.period_id == Period.id).
+             join(Class, Teach.class_id == Class.id).
+             join(Subject, Teach.subject_id == Subject.id).
+             add_columns(Period.semester, Period.year, Class.name, Class.id, Subject.name, Subject.id, Period.id, ))
 
     if teacher_id:
         query = query.filter(Teach.teacher_id.__eq__(teacher_id))
 
-    return query.all()
+    if class_name:
+        query = query.filter(Class.name.contains(class_name))
+
+    query = query.filter(Period.year.__eq__(datetime.now().year))
+
+    return query.order_by('name').all()
 
 
 # get teacher by user_id
@@ -164,8 +174,136 @@ def get_teacher_id(user_id=None):
     query = Teacher.query
     if user_id:
         query = query.filter(Teacher.user_id.__eq__(user_id))
-    return query.all()
+    return query.one()
 
+
+# get Subject by subject_id
+def get_subject(subject_id=None):
+    query = Subject.query
+    if subject_id:
+        query = query.filter(Subject.id.__eq__(subject_id))
+
+    return query.first()
+
+
+# get Period by period_id
+def get_period(period_id=None):
+    query = Period.query
+    if period_id:
+        query = query.filter(Period.id.__eq__(period_id))
+    return query.first()
+
+
+# Hàm chuyển đổi từ chuỗi sang enum
+def str_to_enum(s):
+    if s == 'ScoreType.EXAM_15MINS':
+        return ScoreType.EXAM_15MINS
+    elif s == 'ScoreType.EXAM_45MINS':
+        return ScoreType.EXAM_45MINS
+    elif s == 'ScoreType.EXAM_FINAL':
+        return ScoreType.EXAM_FINAL
+    else:
+        raise ValueError(f"Invalid ScoreType: {s}")
+
+
+# lấy điểm theo subject_id, period_id, class_id
+def get_score(student_id=None, subject_id=None, period_id=None, class_id=None, score_type=None):
+    query = (Score.query.join(ScoreDetail, Score.score_detail_id == ScoreDetail.id).
+             join(StudentClass, Score.student_id == StudentClass.student_id).
+             add_columns(ScoreDetail.score, ScoreDetail.type, Score.student_id))
+
+    if student_id:
+        query = query.filter(Score.student_id.__eq__(student_id))
+    if subject_id:
+        query = query.filter(Score.subject_id.__eq__(subject_id))
+    if period_id:
+        query = query.filter(Score.period_id.__eq__(period_id))
+    if class_id:
+        query = query.filter(StudentClass.class_id.__eq__(class_id))
+    if score_type:
+        query = query.filter(ScoreDetail.type.__eq__(str_to_enum(score_type)))
+
+    return query.order_by('type', 'student_id').all()
+
+
+def get_id_score_detail(scores):
+    listId = []
+
+    for s in scores.values():
+        sd = ScoreDetail(score=s['score'], type=str_to_enum(s['type']))
+        db.session.add(sd)
+        db.session.commit()
+        listId.append(sd.id)
+
+    return listId
+
+
+def create_score(scores, subject_id, period_id):
+    sd_id = get_id_score_detail(scores=scores)
+
+    if scores:
+        for i, s in enumerate(scores.values()):
+            score = Score(student_id=s['student_id'], subject_id=subject_id, score_detail_id=sd_id[i],
+                          period_id=period_id)
+            db.session.add(score)
+            db.session.commit()
+
+
+def count_scores(student_id=None, subject_id=None, period_id=None, class_id=None, score_type=None):
+    query = (Score.query.join(StudentClass, Score.student_id == StudentClass.student_id).
+             join(ScoreDetail, Score.score_detail_id == ScoreDetail.id))
+
+    if student_id:
+        query = query.filter(Score.student_id.__eq__(student_id))
+    if subject_id:
+        query = query.filter(Score.subject_id.__eq__(subject_id))
+    if class_id:
+        query = query.filter(StudentClass.class_id.__eq__(class_id))
+    if period_id:
+        query = query.filter(Score.period_id.__eq__(period_id))
+    if score_type:
+        query = query.filter(ScoreDetail.type.__eq__(str_to_enum(score_type)))
+
+    return query.count()
+
+
+def count_scores_in_session(scores, type, student_id):
+    count = 0
+    if scores:
+        for i in scores.values():
+            if i['type'] == type and i['student_id'] == student_id:
+                count = count + 1
+    return count
+
+
+def get_average_scores(student_id=None, subject_id=None, period_id=None, class_id=None):
+    avr_scr = 0
+    count = 0
+
+    score15 = get_score(student_id=student_id, subject_id=subject_id, period_id=period_id, class_id=class_id,
+                        score_type='ScoreType.EXAM_15MINS')
+    score45 = get_score(student_id=student_id, subject_id=subject_id, period_id=period_id, class_id=class_id,
+                        score_type='ScoreType.EXAM_45MINS')
+    score_final = get_score(student_id=student_id, subject_id=subject_id, period_id=period_id, class_id=class_id,
+                            score_type='ScoreType.EXAM_FINAL')
+
+    for s in score15:
+        avr_scr = avr_scr + s[1]
+        count = count + 1
+    for s in score45:
+        avr_scr = avr_scr + (s[1] * 2)
+        count = count + 2
+    for s in score_final:
+        avr_scr = avr_scr + (s[1] * 2)
+        count = count + 2
+
+    return avr_scr / count
+
+
+def get_teach_subject(teacher_id):
+    query = Subject.query.join(Teach, Teach.subject_id == Subject.id).filter(Teach.teacher_id.__eq__(teacher_id))
+    return query.all()
+ #################################################
 
 def get_subjects():
     return db.session.query(Subject).all()
