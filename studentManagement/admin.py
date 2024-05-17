@@ -32,15 +32,23 @@ class HomeView(AdminIndexView):
 
 
 class UserView(AuthenticatedView):
-    column_list = ['id', 'username', 'first_name', 'user_role', 'is_active']
+    column_list = ['id', 'username', 'first_name', 'last_name', 'user_role', 'is_active']
     column_searchable_list = ['id', 'username', 'first_name']
-    column_filters = ['id', 'username', 'first_name']
+    column_filters = ['id', 'username', 'user_role']
+    column_labels = {
+        "first_name": "Tên",
+        "last_name": "Họ và tên đệm",
+        "user_role": "Vai trò",
+        "is_active": "Trạng thái"
+    }
 
     def on_model_change(self, form, model, is_created):
         if 'password' in form:
             raw_password = form.password.data
             if raw_password:
-                model.password = hashlib.md5(raw_password.encode('utf-8')).hexdigest()
+                hashed_password = hashlib.md5(raw_password.encode('utf-8')).hexdigest()
+                if model.password != hashed_password:
+                    model.password = hashed_password
 
         super().on_model_change(form, model, is_created)
 
@@ -64,15 +72,9 @@ class MySubjectView(AuthenticatedView):
 
 class MyPolicyView(AuthenticatedView):
     column_list = ['id', 'content', 'data']
-
-
-class PeriodView(AuthenticatedView):
-    column_list = ['id', 'semester', 'year']
-    column_filters = ['year']
-    column_sortable_list = ['year']
     column_labels = {
-        'semester': 'Học kỳ',
-        'year': 'Năm học'
+        "content": "Nội dung",
+        "data": "Dữ liệu"
     }
 
 
@@ -87,7 +89,7 @@ def combined_data(counts_students_of_classes, stats_with_avg):
     for s in stats_with_avg:
         if s[0] in combined_data:
             combined_data[s[0]] = (
-                s[0], combined_data[s[0]][1], combined_data[s[0]][2], s[2], (s[2] / combined_data[s[0]][2])*100)
+                s[0], combined_data[s[0]][1], combined_data[s[0]][2], s[2], (s[2] / combined_data[s[0]][2]) * 100)
 
     # Convert the combined_data dictionary to a list of tuples
     combined_data_list = list(combined_data.items())
@@ -123,7 +125,7 @@ class LogoutView(BaseView):
     @expose('/')
     def index(self):
         logout_user()
-        return redirect('/admin')
+        return redirect('/login')
 
     def is_accessible(self):
         return current_user.is_authenticated and current_user.user_role == UserRole.ADMIN
@@ -133,6 +135,5 @@ admin = Admin(app, index_view=HomeView(), name="Hệ thống quản trị học 
 admin.add_view(UserView(User, db.session, name='Quản lý người dùng'))
 admin.add_view(MySubjectView(Subject, db.session, name='Quản lý môn học'))
 admin.add_view(MyPolicyView(Policy, db.session, name='Chỉnh sửa quy định'))
-admin.add_view(PeriodView(Period, db.session, name='Quản lý học kỳ'))
 admin.add_view(StatsView(name='Thống kê'))
 admin.add_view(LogoutView(name='Đăng xuất'))

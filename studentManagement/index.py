@@ -30,21 +30,9 @@ def login_my_user():
             url = "/" + role.lower()
             return redirect(next if next else url)
         else:
-            err_msg = 'Username hoặc password không đúng!'
+            err_msg = 'Tài khoản hoặc mật khẩu không đúng!'
 
     return render_template('login.html', err_msg=err_msg)
-
-
-@app.route("/admin-login", methods=['post'])
-def process_admin_login():
-    err_msg = ''
-    username = request.form.get('username')
-    password = request.form.get('password')
-    u = dao.auth_user(username=username, password=password, role=UserRole.ADMIN)
-    if u:
-        login_user(user=u)
-
-    return redirect('/admin')
 
 
 @app.route('/logout', methods=['get'])
