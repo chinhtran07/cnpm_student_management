@@ -199,6 +199,18 @@ def save_scores():
     return jsonify({'status': 500})
 
 
+# Update score function
+@app.route('/teacher/api/update_score/<score_id>', methods=['put'])
+def update_score(score_id):
+    value = request.json['value']
+    try:
+        dao.update_score(score_id=score_id, value=value)
+    except Exception as ex:
+        print(ex)
+        return jsonify({'status': 500})
+    return jsonify({'status': 200})
+
+
 if __name__ == '__main__':
     with app.app_context():
         from studentManagement import admin
