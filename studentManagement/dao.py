@@ -104,36 +104,37 @@ def get_student_by_id(id):
 
 def create_or_update_student(id, first_name, last_name, gender, admission_date, dob, address, email, phone_number,
                              is_active):
-    #try:
-        if id:
-            (Student.query.filter_by(id=id).update({
-                'first_name': first_name,
-                'last_name': last_name,
-                'gender': gender,
-                'admission_date': admission_date,
-                'dob': dob,
-                'address': address,
-                'email': email,
-                'phone_number': phone_number,
-                'is_active': is_active
-            }))
-        else:
-            db.session.add(Student(first_name=first_name, last_name=last_name, gender=gender,
-                                   admission_date=admission_date, dob=dob, address=address,
-                                   email=email, phone_number=phone_number, is_active=is_active))
+    # try:
+    if id:
+        (Student.query.filter_by(id=id).update({
+            'first_name': first_name,
+            'last_name': last_name,
+            'gender': gender,
+            'admission_date': admission_date,
+            'dob': dob,
+            'address': address,
+            'email': email,
+            'phone_number': phone_number,
+            'is_active': is_active
+        }))
+    else:
+        db.session.add(Student(first_name=first_name, last_name=last_name, gender=gender,
+                               admission_date=admission_date, dob=dob, address=address,
+                               email=email, phone_number=phone_number, is_active=is_active))
 
-        db.session.commit()
+    db.session.commit()
 
-    #   student_age = datetime.now().year - dob.year
-    #     if 15 <= student_age <= 20:
-    #         db.session.commit()
-    #     else:
-    #         db.session.rollback()
-    #
-    # except Exception as e:
-    #     db.session.rollback()
-    #     return "Lỗi" + str(e)
-    # return None
+
+#   student_age = datetime.now().year - dob.year
+#     if 15 <= student_age <= 20:
+#         db.session.commit()
+#     else:
+#         db.session.rollback()
+#
+# except Exception as e:
+#     db.session.rollback()
+#     return "Lỗi" + str(e)
+# return None
 
 
 def delete_student(id):
@@ -227,7 +228,7 @@ def count_class():
 
 
 # đếm tổng số học sinh của 1 lớp
-def count_total(class_id=None, period_id = None):
+def count_total(class_id=None, period_id=None):
     counter = StudentClass.query
 
     if class_id:
@@ -364,7 +365,7 @@ def count_scores(student_id=None, subject_id=None, period_id=None, class_id=None
     if class_id:
         query = query.filter(StudentClass.class_id.__eq__(class_id))
     if period_id:
-        query = query.filter(Score.period_id.__eq__(period_id),StudentClass.period_id.__eq__(period_id))
+        query = query.filter(Score.period_id.__eq__(period_id), StudentClass.period_id.__eq__(period_id))
     if score_type:
         query = query.filter(ScoreDetail.type.__eq__(str_to_enum(score_type)))
 
@@ -434,34 +435,43 @@ def count_students_of_classes_by_subject_and_period(subject_id, semester, year, 
     if not period:
         return []
 
-    StudentAlias = aliased(Student)
-
     weighted_scores_subquery = (
         db.session.query(
-            StudentAlias.id.label('student_id'),
-            func.avg(
+            Student.id.label('student_id'),
+            func.sum(
                 case(
                     (ScoreDetail.type == 'EXAM_15MINS', ScoreDetail.score * 1),
                     (ScoreDetail.type == 'EXAM_45MINS', ScoreDetail.score * 2),
                     (ScoreDetail.type == 'EXAM_FINAL', ScoreDetail.score * 2),
                     else_=0
                 )
-            ).label('avg_weighted_score')
+            ).label('total_weighted_score'),
+            func.sum(
+                case(
+                    (ScoreDetail.type == 'EXAM_15MINS', 1),
+                    (ScoreDetail.type == 'EXAM_45MINS', 2),
+                    (ScoreDetail.type == 'EXAM_FINAL', 2),
+                    else_=0
+                )
+            ).label('total_weight')
         )
-        .join(Score, StudentAlias.id == Score.student_id)
+        .join(Score, Student.id == Score.student_id)
         .join(ScoreDetail, Score.score_detail_id == ScoreDetail.id)
-        .filter(Score.subject_id == subject_id)
-        .group_by(StudentAlias.id)
+        .filter(Score.subject_id == subject_id, Score.period_id == period.id)
+        .group_by(Student.id)
     ).subquery()
+
+    weighted_avg_score = ((weighted_scores_subquery.c.total_weighted_score / weighted_scores_subquery.c.total_weight)
+                          .label('avg_weighted_score')
+                          )
 
     # Base query to retrieve classes and count of students
     base_query = (
         db.session.query(Class.id, Class.name, func.count(Student.id))
         .join(Teach)
-        .join(Period)
         .join(StudentClass, Class.id == StudentClass.class_id, isouter=True)
         .join(Student, isouter=True)
-        .filter(Teach.subject_id == subject_id, Period.id == period.id)
+        .filter(StudentClass.period_id == period.id)
         .group_by(Class.id)
     )
 
@@ -470,7 +480,7 @@ def count_students_of_classes_by_subject_and_period(subject_id, semester, year, 
         base_query = (
             base_query
             .join(weighted_scores_subquery, Student.id == weighted_scores_subquery.c.student_id)
-            .filter(weighted_scores_subquery.c.avg_weighted_score >= avg_gt_or_equal_to)
+            .filter(weighted_avg_score >= avg_gt_or_equal_to)
         )
 
     return base_query.all()
@@ -482,12 +492,8 @@ def get_subject_by_id(subject_id):
 
 if __name__ == '__main__':
     with app.app_context():
-        test = count_scores(student_id=4, subject_id=1, period_id=2, class_id=1, score_type='ScoreType.EXAM_15MINS')
-        print(test)
-        # subjects = get_subjects()
-        # for subject in subjects:
-        #     print(subject.name)
-
-        # years = get_years()
-        # for year in years:
-        #     print(year)
+        b = count_students_of_classes_by_subject_and_period(semester=Semester.SEMESTER_2.name, year="2024",
+                                                            subject_id=1, avg_gt_or_equal_to=5)
+        period = get_period(semester=Semester.SEMESTER_2.name, year='2024')
+        print(period.id)
+        print(b)
