@@ -5,12 +5,8 @@ from flask_login import login_user, current_user, logout_user
 import math
 import pdb
 from studentManagement import app, dao, login
-from studentManagement.decorators import logged_in
-from studentManagement.models import UserRole
-from weasyprint import HTML, CSS
-from flask.testing import FlaskClient
+from weasyprint import HTML
 
-import io
 
 
 @app.route('/')
@@ -84,7 +80,6 @@ def get_subject():
     return render_template('employee/subject_managements.html', subjects=dao.get_subject())
 
 
-# teacher process
 @app.route('/teacher', methods=['get', 'post'])
 def teacher():
     grade = request.args.get('grade')
