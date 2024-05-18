@@ -39,7 +39,6 @@ def add_user(name, username, password, avatar):
     db.session.commit()
 
 
-
 def auth_user(username, password, role):
     password = str(hashlib.md5(password.strip().encode('utf-8')).hexdigest())
     return User.query.filter(User.username.__eq__(username.strip()),
@@ -188,7 +187,7 @@ def get_subject(subject_id=None):
 
 
 # get Period by period_id
-def get_period(period_id=None):
+def get_period_by_id(period_id=None):
     query = Period.query
     if period_id:
         query = query.filter(Period.id.__eq__(period_id))
