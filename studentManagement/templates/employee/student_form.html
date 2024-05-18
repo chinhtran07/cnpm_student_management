@@ -1,5 +1,82 @@
 {% extends 'layout/base.html' %}
+
 {% block content %}
-<form action="/employee/students/create" method="post">
-</form>
+
+<div class="container">
+  <h2>Thêm học sinh mới</h2>
+  <form method="POST" action="{{ url_for('add_or_update_student') }}">
+
+   {{ form.csrf_token }}
+    {{form.id}}
+    <div class="mb-3">
+      {{form.first_name.label}}
+      {{form.first_name(class="form-control")}}
+    </div>
+    <div class="mb-3">
+        {{form.last_name.label}}
+        {{form.last_name(class="form-control")}}
+    </div>
+    <div class="mb-3">
+      {{form.gender.label}}
+      {{form.gender(class="form-control")}}
+    </div>
+    <div class="mb-3">
+        {{form.admission_date.label}}
+        {{form.admission_date(class="form-control")}}
+    </div>
+    <div class="mb-3">
+      {{form.dob.label}}
+      {{form.dob(class="form-control")}}
+    </div>
+    <div class="mb-3">
+      {{form.address.label}}
+      {{form.address(class="form-control")}}
+    </div>
+    <div class="mb-3">
+      {{form.email.label}}
+      {{form.email(class="form-control")}}
+    </div>
+    <div class="mb-3">
+      {{form.phone_number.label}}
+      {{form.phone_number(class="form-control")}}
+    </div>
+    <div class="mb-3">
+      {{form.is_active.label}}
+      {{form.is_active()}}
+    </div>
+    <button type="submit" class="btn btn-primary">Lưu</button>
+  </form>
+</div>
+
+<script>
+    // Kiểm tra tuổi học sinh khi form được submit
+    document.getElementById('studentForm').addEventListener('submit', function(event) {
+        var dob = document.getElementById("dob").value;
+        var dobYear = new Date(dob).getFullYear();
+        var currentYear = new Date().getFullYear();
+        var age = currentYear - dobYear;
+
+        if (age < 15 || age > 20) {
+            event.preventDefault(); // Ngăn form gửi đi
+
+            // Hiển thị cảnh báo
+            var alertDiv = document.createElement('div');
+            alertDiv.classList.add('alert', 'alert-danger', 'alert-dismissible', 'fade', 'show');
+            alertDiv.setAttribute('role', 'alert');
+            alertDiv.innerHTML = '<strong>Thông báo:</strong> Tuổi học sinh phải nằm trong khoảng từ 15 đến 20.';
+
+            var closeButton = document.createElement('button');
+            closeButton.setAttribute('type', 'button');
+            closeButton.classList.add('close');
+            closeButton.setAttribute('data-dismiss', 'alert');
+            closeButton.setAttribute('aria-label', 'Close');
+            closeButton.innerHTML = '<span aria-hidden="true">&times;</span>';
+
+            alertDiv.appendChild(closeButton);
+
+            document.getElementById('studentForm').insertAdjacentElement('beforebegin', alertDiv);
+        }
+    });
+</script>
+
 {% endblock %}

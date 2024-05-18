@@ -3,42 +3,21 @@
 {% block content %}
 <div class="container">
   <h2>Thêm lớp học mới</h2>
-
-  <form method="POST" action="{{ url_for('add_or_update_classroom') }}">
+  <form method="POST" action="{{ url_for('add_or_update_class') }}">
 
    {{ form.csrf_token }}
-    {{form.id}}
-    <div class="mb-3">
-      {{form.name.label}}
-      {{form.name(class="form-control")}}
-    </div>
-      <div class="mb-3">
-      {{form.students.label}}
-    {{ form.students(class_="selectpicker", **{'data-live-search': 'true'}) }}
-      </div>
+    {{ form.hidden_tag() }} <!-- Add hidden fields for CSRF protection -->
 
-      <div class="mb-3">
-          <table class="table table-hover table-striped table-bordered">
-            <thead>
-            <tr>
-                <th>Id</th>
-                <th>Tên</th>
-                <th></th>
-            </tr>
-            </thead>
-              <tbody>
-            {% for student in students %}
-            <tr>
-                <td>{{ student.id }}</td>
-                <td>{{ student.name }}</td>
-                <td>
-                    <a href="{{ url_for('remove_student_from_class', student_id=student.id, class_id=classroom.id) }}" class="btn btn-danger">Xóa</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-          </table>
-      </div>
+    <div class="mb-3">
+      <label for="name" class="form-label">Tên lớp:</label>
+      {{ form.name(class="form-control", id="name") }}
+    </div>
+
+    <div class="mb-3">
+      <label for="grade" class="form-label">Khối:</label>
+      {{ form.grade(class="form-select", id="grade") }}
+    </div>
+
     <button type="submit" class="btn btn-primary">Lưu</button>
   </form>
 </div>

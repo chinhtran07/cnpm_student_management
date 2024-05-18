@@ -48,10 +48,10 @@ def load_user(user_id):
     return dao.get_user_by_id(user_id)
 
 
+##############################Employee
 @app.route('/employee')
 def employee():
-    total_student = dao.get_student()
-    return render_template("employee/employee.html", total_student=total_student)
+    return render_template("employee/employee.html")
 
 
 @app.route('/employee/students/', methods=['GET'])
@@ -81,11 +81,11 @@ def update_student(id):
     return render_template('employee/student_form.html', form=form)
 
 
-@app.route('/employee/students/create', methods=['GET', 'POST'])
+@app.route('/employee/students/create', methods=['GET'])
 def create_student():
     student = Student()
     form = StudentForm(request.form, obj=student)
-    return render_template('employee/add_student.html', form=form)
+    return render_template('employee/student_form.html', form=form)
 
 
 @app.route('/employee/students/delete/<int:id>')
@@ -96,20 +96,31 @@ def delete_student(id):
 
 # ****************
 @app.route('/employee/classrooms/', methods=['GET'])
-def classroom_list():
-    classrooms = dao.get_all_classroom_info()
-    return render_template('/employee/classrooms.html', classrooms=classrooms)
+def show_classrooms():
+    grade = request.args.get('grade')
+    period_id = request.args.get('period_id')
+    classrooms = dao.load_class(grade, period_id)
+    # Thêm thông tin số lượng học sinh vào mỗi lớp học
+    for classroom in classrooms:
+        classroom.student_count = dao.count_total(class_id=classroom.id)
+    periods = dao.load_periods()
+    return render_template('/employee/classrooms.html', classrooms=classrooms, periods=periods)
 
 
-@app.route('/employee/classrooms/', methods=['POST'])
+@app.route('/employee/classroom_form/', methods=['POST'])
 def add_or_update_classroom():
     form = ClassroomForm()
-    form.students.choices = [(s['id'], s['name']) for s in dao.get_all_student_info()]
-    if form.validate_on_submit():
-        dao.create_or_update_classroom(id=form.id.data, name=form.name.data,
-                                       list_student_id=form.students.data)
+    # Load danh sách học sinh vào SelectMultipleField students
+    form.students.choices = [(student.id, student.name) for student in dao.get_all_student_info()]
+    # Load danh sách giáo viên vào SelectMultipleField teachers
+    form.teachers.choices = [(teacher.id, teacher.name) for teacher in dao.get_all_teachers_info()]
 
-        return redirect('/employee/classrooms')
+    if request.method == 'POST' and form.validate():
+        # Gọi hàm create_or_update_classroom với dữ liệu từ form
+        dao.create_or_update_classroom(name=form.name.data,
+                                       student_ids=form.students.data,
+                                       teacher_ids=form.teachers.data)
+    return redirect('/employee/classrooms')
 
 
 @app.route('/employee/classrooms/<int:id>', methods=['GET'])
@@ -133,6 +144,8 @@ def delete_classroom(id):
     dao.delete_classroom(id)
     return redirect('/employee/classrooms')
 
+
+# ****************
 
 
 @app.route('/teacher', methods=['get', 'post'])

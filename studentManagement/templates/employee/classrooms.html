@@ -1,50 +1,61 @@
 {% extends 'layout/base.html' %}
 
 {% block content %}
-
-<h1 class="text-center text-primary">QUẢN LÝ LỚP HỌC</h1>
-
 <div class="row">
+    <div class="col-md-4">
+        <!-- Form tạo danh sách lớp -->
+        <h2>Danh sách các lớp</h2>
+        <form action="employee/classroom_form" method="post">
+            <!-- Dropdown danh sách lớp -->
+            <label for="grade">Grade:</label>
+            <div class="btn-group-vertical" role="group">
+                <input type="radio" id="grade_all" name="grade" value="ALL" onchange="this.form.submit();" class="btn-check" autocomplete="off">
+                <label class="btn btn-secondary" for="grade_all">Tất cả</label>
 
-<div class="col-md-10">
-    <button type="button" class="btn btn-success">Lưu thông tin</button>
-    <a href="{{url_for('create_classroom')}}" class="btn btn-info">Thêm lớp học</a>
-</div>
-        <div class="col-md-2 card" style="width:150px">
-            <img class="card-img-top" src="https://th.bing.com/th/id/R.dbc8e6138b38860cee6899eabc67df45?rik=hZCUMR4xQ%2btlBA&amp;pid=ImgRaw&amp;r=0" style="width:100px" alt="Card image">
+                <input type="radio" id="grade_ten" name="grade" value="TEN" onchange="this.form.submit();" class="btn-check" autocomplete="off">
+                <label class="btn btn-secondary" for="grade_ten">Lớp 10</label>
 
-        <div class="card-body">
-            <h4 class="card-title"> </h4>
-            <h4 class="card-title"> </h4>
-            <a href="/logout" class="btn btn-danger">Đăng xuất</a>
-        </div>
+                <input type="radio" id="grade_eleven" name="grade" value="ELEVEN" onchange="this.form.submit();" class="btn-check" autocomplete="off">
+                <label class="btn btn-secondary" for="grade_eleven">Lớp 11</label>
+
+                <input type="radio" id="grade_twelve" name="grade" value="TWELVE" onchange="this.form.submit();" class="btn-check" autocomplete="off">
+                <label class="btn btn-secondary" for="grade_twelve">Lớp 12</label>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-8">
+        <!-- Hiển thị thông tin danh sách lớp -->
+        <h2>Danh Sách Lớp</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Tên Lớp</th>
+                    <th scope="col">Năm Học</th>
+                    <th scope="col">Sĩ Số</th>
+                    <th scope="col">Giáo Viên Chủ Nhiệm</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for classroom in classrooms %}
+                <tr>
+                    <td>{{ classroom.name }}</td>
+                    <td>{{ classroom.period }}</td>
+                    <td>{{ classroom.student_count }}</td>
+                    <td>{{ classroom.form_teacher }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <!-- Phân trang -->
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+            </ul>
+        </nav>
+        <!-- Nút tạo danh sách lớp -->
+        <a href="employee/classroom_form" class="btn btn-primary">Tạo Danh Sách Lớp</a>
     </div>
 </div>
-
-<table class="table table-hover table-striped table-bordered">
-        <thead>
-        <tr>
-                <th>Id</th>
-                <th>Tên</th>
-                <th>Số lượng học sinh</th>
-                <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for classroom in classrooms %}
-            <tr>
-                <td>{{ classroom.id }}</td>
-                <td>{{ classroom.name }}</td>
-                <td>{{ classroom.student_count }}</td>
-                <td>
-                    <a href="{{ url_for('update_classroom', id=classroom.id) }}" class="btn btn-success">Cập nhật</a>
-                    {% if classroom.student_count == 0 %}
-                    <a href="{{ url_for('delete_classroom', id=classroom.id) }}" class="btn btn-danger">Xóa</a>
-                    {% endif %}
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
 {% endblock %}

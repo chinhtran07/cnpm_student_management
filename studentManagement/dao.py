@@ -68,131 +68,144 @@ def init_policy():
 
 
 ########Staff function
-
-def add_student_info(first_name, last_name, gender, dob, address, phone_number, avatar):
-    new_student = Information(
-        first_name=first_name,
-        last_name=last_name,
-        gender=gender,
-        dob=dob,
-        address=address,
-        phone_number=phone_number,
-        avatar=avatar
-    )
-    db.session.add(new_student)
-    db.session.commit()
-
-
-def get_student():
-    total_student = Student.query.count()
-    return total_student
-
-
-def get_student_info(phone_number):
-    return Information.query.filter_by(phone_number=phone_number).first()
-
+## Quản lý học sinh
 
 def get_all_student_info():
-    return [{'id': student.id, 'name': student.last_name + ' ' + student.first_name,
-             'gender': student.gender.name, 'admission_date': student.admission_date if student.admission_date else '',
-             'dob': student.dob if student.dob else ''} for student in Student.query.all()]
+    active_students = Student.query.filter_by(is_active=True).all()
+    student_info = []
+    for student in active_students:
+        info = {
+            'id': student.id,
+            'name': student.last_name + ' ' + student.first_name,
+            'gender': student.gender.name,
+            'admission_date': student.admission_date.strftime('%d-%m-%Y') if student.admission_date else '',
+            'dob': student.dob.strftime('%d-%m-%Y') if student.dob else ''
+        }
+        student_info.append(info)
+    return student_info
+
+
+def create_or_update_student(id=None, **kwargs):
+    # Cập nhật thông tin học sinh có sẵn
+    if id:
+        student = Student.query.get(id)
+        if student:
+            for key, value in kwargs.items():
+                setattr(student, key, value)
+    # Tạo mới học sinh
+    else:
+        student = Student(**kwargs)
+        db.session.add(student)
+    # Kiểm tra tuổi học sinh
+    dob = kwargs.get('dob')
+    if dob:
+        student_age = datetime.now().year - dob.year
+        if 15 <= student_age <= 20:
+            db.session.commit()
+        else:
+            db.session.rollback()
 
 
 def get_student_by_id(id):
-    return Student.query.get(id)
-
-
-def create_or_update_student(id, first_name, last_name, gender, admission_date, dob, address, email, phone_number,
-                             is_active):
-    #try:
-        if id:
-            (Student.query.filter_by(id=id).update({
-                'first_name': first_name,
-                'last_name': last_name,
-                'gender': gender,
-                'admission_date': admission_date,
-                'dob': dob,
-                'address': address,
-                'email': email,
-                'phone_number': phone_number,
-                'is_active': is_active
-            }))
-        else:
-            db.session.add(Student(first_name=first_name, last_name=last_name, gender=gender,
-                                   admission_date=admission_date, dob=dob, address=address,
-                                   email=email, phone_number=phone_number, is_active=is_active))
-
-        db.session.commit()
-
-    #   student_age = datetime.now().year - dob.year
-    #     if 15 <= student_age <= 20:
-    #         db.session.commit()
-    #     else:
-    #         db.session.rollback()
-    #
-    # except Exception as e:
-    #     db.session.rollback()
-    #     return "Lỗi" + str(e)
-    # return None
+    student = Student.query.get(id)
+    return student
 
 
 def delete_student(id):
-    Student.query.filter_by(id=id).delete()
-    db.session.commit()
-
-
-def get_subject():
-    all_subject = Subject.query.all()
-    return all_subject
-
-
-def get_all_classroom_info():
-    return [{'id': c.id, 'name': c.name,
-             'student_count': db.session.query(func.count(Student.id))
-             .join(StudentClass)
-             .filter(StudentClass.class_id == c.id).scalar()}
-            for c in Class.query.all()]
-
-
-def get_classroom_by_id(id):
-    return Class.query.get(id)
-
-
-# def delete_classroom(id):
-#     Class.query.filter_by(id=id).delete()
-#     db.session.commit()
-
-def delete_classroom(id):
-    try:
-        # Xóa các tham chiếu từ bảng Teach và FormTeacher
-        Teach.query.filter_by(class_id=id).delete()
-        FormTeacher.query.filter_by(class_id=id).delete()
-
-        # Xóa lớp
-        class_to_delete = Class.query.get(id)
-        db.session.delete(class_to_delete)
+    student = Student.query.get(id)
+    if student:
+        student.is_active = False
         db.session.commit()
-        print("Classroom deleted successfully.")
-    except Exception as e:
-        db.session.rollback()
-        print("Error:", e)
-
-
-def create_or_update_classroom(id, name, list_student_id):
-    if id:
-        classroom = Class.query.get(id)
+        return True
     else:
-        classroom = Class()
+        return False
 
-    student_class_list = [StudentClass(student_id=student_id,
-                                       class_id=classroom.id)
-                          for student_id in list_student_id]
-    classroom.student_class = student_class_list
 
-    classroom.name = name
-    if not id:
-        db.session.add(classroom)
-    db.session.commit()
+## Quản lý lớp học
+# lấy danh sách lớp
+def load_class(grade=None, page=None, class_name=None, class_id=None, period=None):
+    query = Class.query
+
+    if grade:
+        if grade == "10":
+            query = query.filter(Class.grade.__eq__('GRADE_10TH')).order_by('name')
+        elif grade == "11":
+            query = query.filter(Class.grade.__eq__('GRADE_11ST')).order_by('name')
+        else:
+            query = query.filter(Class.grade.__eq__('GRADE_12ND')).order_by('name')
+
+    if period:
+        query = query.filter(Class.period.__eq__(period))
+
+    if page:
+        page_size = 4
+        start = (int(page) - 1) * page_size
+        return query.order_by('name').slice(start, start + page_size).all()
+
+    if class_name:
+        query = query.filter(Class.name.contains(class_name))
+    if class_id:
+        return query.filter(Class.id.__eq__(class_id)).first()
+
+    return query.order_by('name').all()
+
+
+# đếm tổng số học sinh của 1 lớp
+def count_total(class_id=None, period_id=None):
+    counter = StudentClass.query
+
+    if class_id:
+        counter = counter.filter(StudentClass.class_id.__eq__(class_id))
+    if period_id:
+        counter = counter.filter(StudentClass.period_id.__eq__(period_id))
+
+    return counter.count()
+
+
+# lấy danh sách học sinh của một lớp
+def get_list_student(class_id=None, period_id=None):
+    query = StudentClass.query.join(Student, StudentClass.student_id == Student.id).add_columns(Student.first_name,
+                                                                                                Student.id,
+                                                                                                Student.last_name,
+                                                                                                Student.gender,
+                                                                                                Student.address,
+                                                                                                )
+
+    if class_id:
+        query = query.filter(StudentClass.class_id.__eq__(class_id))
+    if period_id:
+        query = query.filter(StudentClass.period_id.__eq__(period_id))
+
+    return query.all()
+
+
+# lấy danh sách học sinh của một lớp
+def get_list_student(class_id=None, period_id=None):
+    query = StudentClass.query.join(Student, StudentClass.student_id == Student.id).add_columns(Student.first_name,
+                                                                                                Student.id,
+                                                                                                Student.last_name,
+                                                                                                Student.gender,
+                                                                                                Student.address,
+                                                                                                )
+
+    if class_id:
+        query = query.filter(StudentClass.class_id.__eq__(class_id))
+    if period_id:
+        query = query.filter(StudentClass.period_id.__eq__(period_id))
+
+    return query.all()
+
+
+# get teacher by user_id
+def get_teacher_id(user_id=None):
+    query = Teacher.query
+    if user_id:
+        query = query.filter(Teacher.user_id.__eq__(user_id))
+    return query.one()
+
+def load_periods():
+    periods = Period.query.all()
+    return periods
 
 
 ########### Teacher function
