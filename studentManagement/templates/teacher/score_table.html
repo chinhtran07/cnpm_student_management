@@ -25,7 +25,8 @@
 </div>
 {% else %}
 <div class="container">
-    <a class="btn btn-danger mb-2" href="/download_pdf">Export file</a>
+    <a class="btn btn-danger mb-2"
+       onclick="download_pdf({{class_obj.id}},{{subject.id}},{{period.id}})"> Export file </a>
     <div class="row">
         <div class="col-5">
             <table class="table table-bordered">

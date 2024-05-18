@@ -1,12 +1,14 @@
 import random
 
-from flask import redirect, request, render_template, session, jsonify,send_file
+from flask import redirect, request, render_template, session, jsonify, make_response
 from flask_login import login_user, current_user, logout_user
 import math
 import pdb
 from studentManagement import app, dao, login
 from studentManagement.decorators import logged_in
 from studentManagement.models import UserRole
+from weasyprint import HTML, CSS
+from flask.testing import FlaskClient
 
 import io
 
@@ -255,9 +257,41 @@ def update_score(score_id):
 
 
 # Export pdf
-@app.route('/download_pdf')
+@app.route('/teacher/download_pdf', methods=['post'])
 def download_pdf():
-    pass
+    class_obj = dao.load_class(class_id=request.json.get('class_id'))
+    subject = dao.get_subject(subject_id=request.json.get('subject_id'))
+    period = dao.get_period(period_id=request.json.get('period_id'))
+    students = dao.get_list_student(class_id=class_obj.id)
+    scores = dao.get_score(period_id=period.id, class_id=class_obj.id, subject_id=subject.id)
+    total_score = dao.count_scores(subject_id=subject.id, class_id=class_obj.id, period_id=period.id)
+    total_score_input = dao.count_total(class_id=class_obj.id) * (
+            subject.exam_15mins + subject.exam_45mins + 1)
+    list_avr = []
+    if total_score >= total_score_input:
+        for student in students:
+            list_avr.append(
+                dao.get_average_scores(student_id=student.id, subject_id=subject.id, period_id=period.id,
+                                       class_id=class_obj.id))
+
+    rendered_html = render_template(template_name_or_list='teacher/score_table.html', class_obj=class_obj,
+                                    subject=subject, period=period, students=students, scores=scores,
+                                    total_score=total_score,
+                                    total_score_input=total_score_input, list_avr=list_avr)
+
+    # Tạo PDF từ HTML
+
+    pdf = HTML(string=rendered_html).write_pdf()
+
+    # Tạo response cho file PDF
+    response = make_response(pdf)
+    print(response)
+    response.headers['Content-Type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = 'attachment; filename=bangDiem.pdf'
+    print(response.headers)
+    return response
+
+
 # teacher process
 
 if __name__ == '__main__':
