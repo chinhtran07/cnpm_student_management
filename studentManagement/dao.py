@@ -137,7 +137,7 @@ def count_total(class_id=None):
 
 
 # lấy danh sách học sinh của một lớp
-def get_list_student(class_id=None):
+def get_list_student(class_id=None, period_id=None):
     query = StudentClass.query.join(Student, StudentClass.student_id == Student.id).add_columns(Student.first_name,
                                                                                                 Student.id,
                                                                                                 Student.last_name,
@@ -147,6 +147,8 @@ def get_list_student(class_id=None):
 
     if class_id:
         query = query.filter(StudentClass.class_id.__eq__(class_id))
+    if period_id:
+        query = query.filter(StudentClass.period_id.__eq__(period_id))
 
     return query.all()
 

@@ -115,9 +115,10 @@ def score_management():
 def list_student():
     class_id = request.args.get('class_id')
 
-    students = dao.get_list_student(class_id=class_id)
+    students1 = dao.get_list_student(class_id=class_id, period_id=1)
+    students2 = dao.get_list_student(class_id=class_id, period_id=2)
 
-    return render_template('teacher/list_student.html', students=students)
+    return render_template('teacher/list_student.html', students1=students1, students2=students2)
 
 
 @app.route('/teacher/score_input')
@@ -125,7 +126,8 @@ def score_input():
     class_obj = dao.load_class(class_id=request.args.get('class_id'))
     subject = dao.get_subject(subject_id=request.args.get('subject_id'))
     period = dao.get_period_by_id(period_id=request.args.get('period'))
-    students = dao.get_list_student(class_id=class_obj.id)
+    students = dao.get_list_student(class_id=class_obj.id, period_id=request.args.get('period'))
+    
     scores = dao.get_score(period_id=period.id, class_id=class_obj.id, subject_id=subject.id)
 
     return render_template(template_name_or_list='teacher/score_input.html', class_obj=class_obj,
@@ -137,7 +139,8 @@ def score_table():
     class_obj = dao.load_class(class_id=request.args.get('class_id'))
     subject = dao.get_subject(subject_id=request.args.get('subject_id'))
     period = dao.get_period_by_id(period_id=request.args.get('period'))
-    students = dao.get_list_student(class_id=class_obj.id)
+    students = dao.get_list_student(class_id=class_obj.id, period_id=request.args.get('period'))
+
     scores = dao.get_score(period_id=period.id, class_id=class_obj.id, subject_id=subject.id)
     total_score = dao.count_scores(subject_id=subject.id, class_id=class_obj.id, period_id=period.id)
     total_score_input = dao.count_total(class_id=class_obj.id) * (
@@ -240,7 +243,7 @@ def download_pdf():
     class_obj = dao.load_class(class_id=request.json.get('class_id'))
     subject = dao.get_subject(subject_id=request.json.get('subject_id'))
     period = dao.get_period(period_id=request.json.get('period_id'))
-    students = dao.get_list_student(class_id=class_obj.id)
+    students = dao.get_list_student(class_id=class_obj.id, period_id=request.args.get('period'))
     scores = dao.get_score(period_id=period.id, class_id=class_obj.id, subject_id=subject.id)
     total_score = dao.count_scores(subject_id=subject.id, class_id=class_obj.id, period_id=period.id)
     total_score_input = dao.count_total(class_id=class_obj.id) * (
