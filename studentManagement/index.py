@@ -84,28 +84,6 @@ def adjust_regulations():
 #     return render_template('employee/subject_managements.html', subjects=dao.get_subject())
 
 
-@app.route('/employee/add_student', methods=['GET', 'POST'])
-def add_student():
-    if request.method == 'POST':
-        first_name = request.form['first_name']
-        last_name = request.form['last_name']
-        gender = request.form['gender']
-        dob = request.form['dob']
-        address = request.form['address']
-        phone_number = request.form['phone_number']
-        avatar = request.form['avatar']
-
-        dao.add_student_info(first_name, last_name, gender, dob, address, phone_number, avatar)
-        student_info = dao.get_student_info(phone_number)
-        return render_template('employee/student_info.html', student_info=student_info)
-    else:
-        return render_template('employee/add_student.html')
-
-
-@app.route('/employee/subject_managements')
-def get_subject():
-    return render_template('employee/subject_managements.html', subjects=dao.get_subject())
-
 
 # teacher process
 @app.route('/teacher', methods=['get', 'post'])
@@ -147,8 +125,9 @@ def list_student():
 def score_input():
     class_obj = dao.load_class(class_id=request.args.get('class_id'))
     subject = dao.get_subject(subject_id=request.args.get('subject_id'))
-    period = dao.get_period(period_id=request.args.get('period'))
+    period = dao.get_period_by_id(period_id=request.args.get('period'))
     students = dao.get_list_student(class_id=class_obj.id, period_id=request.args.get('period'))
+    
     scores = dao.get_score(period_id=period.id, class_id=class_obj.id, subject_id=subject.id)
 
     return render_template(template_name_or_list='teacher/score_input.html', class_obj=class_obj,
@@ -159,8 +138,9 @@ def score_input():
 def score_table():
     class_obj = dao.load_class(class_id=request.args.get('class_id'))
     subject = dao.get_subject(subject_id=request.args.get('subject_id'))
-    period = dao.get_period(period_id=request.args.get('period'))
+    period = dao.get_period_by_id(period_id=request.args.get('period'))
     students = dao.get_list_student(class_id=class_obj.id, period_id=request.args.get('period'))
+
     scores = dao.get_score(period_id=period.id, class_id=class_obj.id, subject_id=subject.id)
     total_score = dao.count_scores(subject_id=subject.id, class_id=class_obj.id, period_id=period.id)
     total_score_input = dao.count_total(class_id=class_obj.id) * (
