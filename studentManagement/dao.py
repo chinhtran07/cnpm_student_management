@@ -2,12 +2,12 @@ import hashlib
 import pdb
 from datetime import datetime
 
-from sqlalchemy import desc, func, select
+from sqlalchemy import desc, func, select, case
+from sqlalchemy.orm import aliased
 
-
-from studentManagement import db, app
+from studentManagement import db, app, admin
 from studentManagement.models import User, Student, Period, StudentClass, Policy, Class, Semester, Teach, Teacher, \
-    Subject, Score, ScoreDetail
+    Subject, Score, ScoreDetail, ScoreType, Information
 
 
 def get_period(semester, year):
@@ -36,7 +36,6 @@ def add_user(name, username, password, avatar):
     u = User(name=name, username=username, password=password, avatar=avatar)
     db.session.add(u)
     db.session.commit()
-
 
 
 def auth_user(username, password, role):
@@ -92,9 +91,12 @@ def get_student():
 def get_student_info(phone_number):
     return Information.query.filter_by(phone_number=phone_number).first()
 
+
 def get_subject():
     all_subject = Subject.query.all()
     return all_subject
+
+
 ########### Teacher function
 # lấy danh sách lớp
 def load_class(grade=None, page=None, class_name=None, class_id=None):
@@ -187,7 +189,7 @@ def get_subject(subject_id=None):
 
 
 # get Period by period_id
-def get_period(period_id=None):
+def get_period_by_id(period_id=None):
     query = Period.query
     if period_id:
         query = query.filter(Period.id.__eq__(period_id))
@@ -303,7 +305,9 @@ def get_average_scores(student_id=None, subject_id=None, period_id=None, class_i
 def get_teach_subject(teacher_id):
     query = Subject.query.join(Teach, Teach.subject_id == Subject.id).filter(Teach.teacher_id.__eq__(teacher_id))
     return query.all()
- #################################################
+
+
+#################################################
 
 def get_subjects():
     return db.session.query(Subject).all()
@@ -320,6 +324,26 @@ def count_students_of_classes_by_subject_and_period(subject_id, semester, year, 
     if not period:
         return []
 
+    StudentAlias = aliased(Student)
+
+    weighted_scores_subquery = (
+        db.session.query(
+            StudentAlias.id.label('student_id'),
+            func.avg(
+                case(
+                    (ScoreDetail.type == 'EXAM_15MINS', ScoreDetail.score * 1),
+                    (ScoreDetail.type == 'EXAM_45MINS', ScoreDetail.score * 2),
+                    (ScoreDetail.type == 'EXAM_FINAL', ScoreDetail.score * 2),
+                    else_=0
+                )
+            ).label('avg_weighted_score')
+        )
+        .join(Score, StudentAlias.id == Score.student_id)
+        .join(ScoreDetail, Score.score_detail_id == ScoreDetail.id)
+        .filter(Score.subject_id == subject_id)
+        .group_by(StudentAlias.id)
+    ).subquery()
+
     # Base query to retrieve classes and count of students
     base_query = (
         db.session.query(Class.id, Class.name, func.count(Student.id))
@@ -334,9 +358,9 @@ def count_students_of_classes_by_subject_and_period(subject_id, semester, year, 
     # If average score condition is provided, add it to the query
     if avg_gt_or_equal_to is not None:
         base_query = (
-            base_query.join(Score, (Student.id == Score.student_id) & (Score.subject_id == Teach.subject_id))
-            .join(ScoreDetail, Score.score_detail_id == ScoreDetail.id)
-            .having(func.avg(ScoreDetail.score) >= avg_gt_or_equal_to)
+            base_query
+            .join(weighted_scores_subquery, Student.id == weighted_scores_subquery.c.student_id)
+            .filter(weighted_scores_subquery.c.avg_weighted_score >= avg_gt_or_equal_to)
         )
 
     return base_query.all()
@@ -348,11 +372,8 @@ def get_subject_by_id(subject_id):
 
 if __name__ == '__main__':
     with app.app_context():
-        pass
-        # subjects = get_subjects()
-        # for subject in subjects:
-        #     print(subject.name)
-
-        # years = get_years()
-        # for year in years:
-        #     print(year)
+        a = count_students_of_classes_by_subject_and_period(1, semester=Semester.SEMESTER_1.name, year="2024")
+        b = count_students_of_classes_by_subject_and_period(1, semester=Semester.SEMESTER_1.name, year="2024", avg_gt_or_equal_to=5)
+        c = admin.combined_data(a,b)
+        # d = get_average_scores(3,1,1,1 )
+        print(c)

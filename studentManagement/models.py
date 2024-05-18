@@ -177,22 +177,22 @@ if __name__ == '__main__':
         #     db.session.commit()
         #
         import hashlib
-        u = User(first_name='', username='admin1',
-                 password=str(hashlib.md5("123456".encode('utf-8')).hexdigest()),
-                 user_role=UserRole.ADMIN, is_supervisor=True)
-        db.session.add(u)
-        #
+        # u = User(first_name='', username='admin1',
+        #          password=str(hashlib.md5("123456".encode('utf-8')).hexdigest()),
+        #          user_role=UserRole.ADMIN, is_supervisor=True)
+        # db.session.add(u)
+
         # u2 = User(username='kiet', user_role=UserRole.TEACHER, is_supervisor=False, first_name='Kiet',
         #           last_name='Nguyen',
         #           gender=UserGender.MALE, address='HCM', phone_number='0923740834', email='kiet@gmail.com',
         #           avatar='https://res-console.cloudinary.com/dwdvnztnn/thumbnails/v1/image/upload/v1715050270/c3Vwcl9jYXRfZ3l0eGR5/drilldown',
         #           password=str(hashlib.md5("123456".encode('utf-8')).hexdigest()))
         #
-        admin = Admin(user_id=u.get_id())
         # db.session.add(u2)
-        db.session.commit()
+        # db.session.commit()
+        # admin = Admin(user_id=1)
         #
-        # teacher = Teacher(qualification="Tiến sĩ", user_id=u2.get_id())
+        # teacher = Teacher(qualification="Tiến sĩ", user_id=2)
         # db.session.add_all([admin, teacher])
         # db.session.commit()
         # c1 = Class(name='10A2', grade=StudentGrade.GRADE_10TH)
@@ -207,7 +207,7 @@ if __name__ == '__main__':
         #
         # db.session.add_all([c1, c2, c3, c4, c5, c6, c7, c8, c9])
         # db.session.commit()
-
+        #
         #
         # subj1 = Subject(name='Toán 10', grade=StudentGrade.GRADE_10TH, exam_15mins=2, exam_45mins=1)
         # subj2 = Subject(name='Toán 11', grade=StudentGrade.GRADE_11ST, exam_15mins=2, exam_45mins=1)
@@ -261,7 +261,7 @@ if __name__ == '__main__':
         #
         # db.session.add_all([sc, sc1, sc2, sc3, sc4, sc5, sc6, sc7, sc8, sc9])
         # db.session.commit()
-
+        #
         # #thêm dữ liệu lớp teach
         # t = Teach(teacher_id=1, subject_id=1, class_id=1, period_id=1)
         # t1 = Teach(teacher_id=1, subject_id=1, class_id=1, period_id=2)
@@ -270,8 +270,6 @@ if __name__ == '__main__':
         # db.session.add_all([t, t1, t2, t3])
         # db.session.commit()
 
-        # t = Teach(teacher_id=2, subject_id=4, class_id=2, period_id=1)
-        # t1 = Teach(teacher_id=2, subject_id=4, class_id=2, period_id=2)
-        #
-        # db.session.add_all([t, t1])
         # db.session.commit()
+
+

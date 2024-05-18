@@ -118,7 +118,7 @@ def list_student():
 def score_input():
     class_obj = dao.load_class(class_id=request.args.get('class_id'))
     subject = dao.get_subject(subject_id=request.args.get('subject_id'))
-    period = dao.get_period(period_id=request.args.get('period'))
+    period = dao.get_period_by_id(period_id=request.args.get('period'))
     students = dao.get_list_student(class_id=class_obj.id)
     scores = dao.get_score(period_id=period.id, class_id=class_obj.id, subject_id=subject.id)
 
@@ -130,7 +130,7 @@ def score_input():
 def score_table():
     class_obj = dao.load_class(class_id=request.args.get('class_id'))
     subject = dao.get_subject(subject_id=request.args.get('subject_id'))
-    period = dao.get_period(period_id=request.args.get('period'))
+    period = dao.get_period_by_id(period_id=request.args.get('period'))
     students = dao.get_list_student(class_id=class_obj.id)
     scores = dao.get_score(period_id=period.id, class_id=class_obj.id, subject_id=subject.id)
     total_score = dao.count_scores(subject_id=subject.id, class_id=class_obj.id, period_id=period.id)
