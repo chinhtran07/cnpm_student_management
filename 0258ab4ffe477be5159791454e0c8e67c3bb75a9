@@ -1,0 +1,220 @@
+[33mcommit 44b5815dc146f51633598ec30ae6632a1052cd9f[m[33m ([m[1;36mHEAD -> [m[1;32mkiet[m[33m, [m[1;31morigin/kiet[m[33m)[m
+Author: Kiet Nguyen <kiethotboy0979@gmail.com>
+Date:   Sat May 18 20:41:10 2024 +0700
+
+    them role vao header
+
+[33mcommit 602cc733efb4145c997a233871984d16423489e2[m
+Merge: 0258ab4 bd3606e
+Author: Kiet Nguyen <kiethotboy0979@gmail.com>
+Date:   Sat May 18 20:28:18 2024 +0700
+
+    fix code
+
+[33mcommit 0258ab4ffe477be5159791454e0c8e67c3bb75a9[m
+Author: Kiet Nguyen <kiethotboy0979@gmail.com>
+Date:   Sat May 18 20:23:19 2024 +0700
+
+    code hot fix
+
+[33mcommit bd3606e0245d4db773265b64a42a136b64cc5125[m
+Merge: 295aff5 8c745ee
+Author: Chinh Tran <154593521+chinhtran07@users.noreply.github.com>
+Date:   Fri May 17 19:59:00 2024 +0700
+
+    Merge branch 'main' into kiet
+
+[33mcommit 295aff5a303862249566f2f9e733185bcc5ebeef[m
+Author: Kiet Nguyen <kiethotboy0979@gmail.com>
+Date:   Fri May 17 17:07:16 2024 +0700
+
+    code employee
+
+[33mcommit 8c745eeb7c555f12e587aba0bfcf735efb3becab[m
+Author: chinhtran07 <chinh.t1807@gmail.com>
+Date:   Fri May 17 13:58:19 2024 +0700
+
+    update ui admin
+
+[33mcommit 27f8fd16f98a62695cf147e4f3b7c0bd070fc91e[m
+Author: chinhtran07 <chinh.t1807@gmail.com>
+Date:   Fri May 17 11:44:32 2024 +0700
+
+    update ui admin
+
+[33mcommit 437b82175c5b12f8997bb0565a502c888e775783[m
+Author: Kiet Nguyen <kiethotboy0979@gmail.com>
+Date:   Wed May 15 15:23:26 2024 +0700
+
+    Kiet code
+
+[33mcommit 599a9c2aad6fbe34c897e7f04576e5a64845914f[m
+Merge: 7450aac 46b36a3
+Author: Chinh Tran <154593521+chinhtran07@users.noreply.github.com>
+Date:   Sat May 11 23:17:45 2024 +0700
+
+    Merge pull request #4
+    
+    complete tasks
+
+[33mcommit 46b36a31a30db7cbbb61fbe4935bad1d018f0bdf[m
+Author: chinhtran07 <chinh.t1807@gmail.com>
+Date:   Sat May 11 16:05:35 2024 +0700
+
+    fix error teacher
+
+[33mcommit 2366411d6671a6db17772a0609839d23a1b82221[m
+Author: chinhtran07 <chinh.t1807@gmail.com>
+Date:   Fri May 10 17:18:03 2024 +0700
+
+    update stats.html
+
+[33mcommit 23e08afac8096f3c81de4689db707f5fc86da710[m
+Author: chinhtran07 <chinh.t1807@gmail.com>
+Date:   Fri May 10 13:32:33 2024 +0700
+
+    complete stats.html
+
+[33mcommit 195875d8ace9e231e8e772f81be3ae81ad81ae4b[m
+Author: chinhtran07 <chinh.t1807@gmail.com>
+Date:   Fri May 10 00:51:40 2024 +0700
+
+    add stats final subject score
+
+[33mcommit 6c597c9118ac3f272a4c0fd401d5516acc3afa07[m
+Author: chinhtran07 <chinh.t1807@gmail.com>
+Date:   Wed May 8 23:14:26 2024 +0700
+
+    edit home page admin
+
+[33mcommit 7450aac94a28a8fe61424228939dddcf0e4cf176[m
+Merge: e6e0aca 8b45184
+Author: Chinh Tran <154593521+chinhtran07@users.noreply.github.com>
+Date:   Wed May 8 20:34:52 2024 +0700
+
+    Merge pull request #3 from chinhtran07/chinh
+    
+    add stats_counts_students_by_period
+
+[33mcommit 8b45184d1d7d13b4bfcac37a5214378d9ddb517f[m
+Merge: d099ea5 e6e0aca
+Author: Chinh Tran <154593521+chinhtran07@users.noreply.github.com>
+Date:   Wed May 8 20:34:12 2024 +0700
+
+    Merge branch 'main' into chinh
+
+[33mcommit d099ea5c07a453bb21b0cd85294fb4a419c9c0cd[m
+Author: chinhtran07 <chinh.t1807@gmail.com>
+Date:   Wed May 8 20:26:59 2024 +0700
+
+    add stats_counts_students_by_period
+
+[33mcommit e6e0acaadad718b8d7dce4106a7c94947d9e6edf[m
+Merge: eecef8e 7c19ff1
+Author: Kiet Nguyen <kiethotboy0979@gmail.com>
+Date:   Wed May 8 16:53:06 2024 +0700
+
+    Merge branch 'main' of https://github.com/chinhtran07/cnpm_student_management
+
+[33mcommit eecef8e6c28d9348c99c2af762a8a7f434ab2124[m
+Author: Kiet Nguyen <kiethotboy0979@gmail.com>
+Date:   Wed May 8 16:51:30 2024 +0700
+
+    code
+
+[33mcommit 7c19ff16ff3bb70d8f286f0106827c6cb3dd213f[m
+Author: duong thanh binh <binh1082003@gmail.com>
+Date:   Tue May 7 15:36:57 2024 +0700
+
+    them data vao database, giao dien trang chu teacher, mot so xu ly co ban
+
+[33mcommit f84fe9edff8c4f23bceb26435909b714cfdacd59[m[33m ([m[1;32mmain[m[33m)[m
+Merge: fe85ef6 bf63792
+Author: Chinh Tran <154593521+chinhtran07@users.noreply.github.com>
+Date:   Mon May 6 13:23:14 2024 +0700
+
+    Merge pull request #2
+    
+    add data-export
+
+[33mcommit bf637926d3094c67418568774cbc613cf9d85adf[m
+Author: chinhtran07 <chinh.t1807@gmail.com>
+Date:   Mon May 6 13:21:22 2024 +0700
+
+    login user, data-export
+
+[33mcommit fe85ef628c181b2b25c6366e6fdd5ec8b9299ca1[m
+Merge: 55ef427 95d724b
+Author: Chinh Tran <154593521+chinhtran07@users.noreply.github.com>
+Date:   Sun May 5 12:38:24 2024 +0700
+
+    Merge pull request #1 from chinhtran07/chinh
+    
+    merge
+
+[33mcommit 95d724be785975236e6ea45b87dc2dfeddadeb82[m
+Merge: cf538ae 55ef427
+Author: Chinh Tran <154593521+chinhtran07@users.noreply.github.com>
+Date:   Sun May 5 12:38:11 2024 +0700
+
+    Merge branch 'main' into chinh
+
+[33mcommit cf538ae3bfde5e0f6e79cdb1f035e94ea782fac3[m
+Author: chinhtran07 <chinh.t1807@gmail.com>
+Date:   Sun May 5 12:17:32 2024 +0700
+
+    update project
+
+[33mcommit 56c3a0ede290b0d7464a675deb7a9fb463069fc0[m
+Author: chinhtran07 <chinh.t1807@gmail.com>
+Date:   Fri May 3 23:07:21 2024 +0700
+
+    update admin
+
+[33mcommit d5ad24e40968bef558ce1cdc0faa6d31be7befe8[m
+Author: chinhtran07 <chinh.t1807@gmail.com>
+Date:   Thu May 2 21:14:25 2024 +0700
+
+    add management-subjects.html
+
+[33mcommit 81e349d074b570c4d8791d233f29e71350e9bbc2[m
+Author: chinhtran07 <chinh.t1807@gmail.com>
+Date:   Thu May 2 17:52:10 2024 +0700
+
+    complete policy_adjust.html
+
+[33mcommit 750ec6eb9aeb8bc9a89996860797853fc15e9b84[m
+Author: chinhtran07 <chinh.t1807@gmail.com>
+Date:   Thu May 2 17:51:35 2024 +0700
+
+    complete admin-index
+
+[33mcommit 55ef427ea10a9116e3e2bc271e3fef643c0f02ad[m
+Author: chinhtran07 <chinh.t1807@gmail.com>
+Date:   Tue Apr 30 18:05:31 2024 +0700
+
+    add dao, index, admin, admin-index, layout
+
+[33mcommit 079559d05dbd8e1dc23873c5695b03c5323b3d29[m[33m ([m[1;31morigin/employee[m[33m)[m
+Author: chinhtran07 <chinh.t1807@gmail.com>
+Date:   Mon Apr 29 12:03:09 2024 +0700
+
+    add requirements
+
+[33mcommit 9ade5bfe7a01fc3898d3c47d3c85780b7dd0bacc[m
+Author: chinhtran07 <chinh.t1807@gmail.com>
+Date:   Mon Apr 29 11:58:09 2024 +0700
+
+    update models
+
+[33mcommit e3c547dfd3794e47943c2d908cc5ccacaf48200b[m
+Author: chinh <chinh.t1807@gmail.com>
+Date:   Sun Apr 7 04:06:01 2024 +0700
+
+    add flask structure
+
+[33mcommit e3e1dac24156b777c6a3b81e50be1fe14bd53adf[m
+Author: Chinh Tran <154593521+chinhtran07@users.noreply.github.com>
+Date:   Sun Mar 31 22:44:57 2024 +0700
+
+    Initial commit
