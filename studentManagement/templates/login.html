@@ -13,38 +13,47 @@
             integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
             crossorigin="anonymous"></script>
 </head>
-<body class="bg-dark">
-<div class="container mt-5">
+<body class="bg-secondary">
+<div class="container mt-5" style="width:700px">
     <div class="row justify-content-center">
         <div class="card col-md-6">
-            <div class="card-header">
-                <h1 class="text-center text-primary mb-4">Login</h1>
+            <div class="card-header bg-light">
+                <h1 class="text-center mb-4 text-info">Đăng nhập</h1>
+                <div class="d-flex justify-content-center">
+                    <img src="https://static.vecteezy.com/system/resources/previews/015/481/583/non_2x/bkc-letter-logo-design-on-white-background-bkc-creative-initials-circle-logo-concept-bkc-letter-design-vector.jpg"
+                         width="100px"/>
+                </div>
             </div>
-            <form method="POST" action="/login">
-                <div class="mb-3">
-                    <label for="username" class="form-label">Username:</label>
-                    <input type="text" class="form-control" id="username" name="username" required>
-                </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password:</label>
-                    <input type="password" class="form-control" id="password" name="password" required>
-                </div>
-                <div class="mb-3">
-                    <label for="role" class="form-label">Role:</label>
-                    <select class="form-select" id="role" name="role">
-                        <option value="teacher">Teacher</option>
-                        <option value="employee">Employee</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-primary">Login</button>
-            </form>
             {% if err_msg %}
             <div class="alert alert-danger mt-3" role="alert">
                 {{ err_msg }}
             </div>
             {% endif %}
+            <form method="POST" action="/login">
+                <div class="mb-3 form-floating mt-3">
+                    <select class="form-select form-control" id="role" name="role">
+                        <option value="TEACHER">Giáo viên</option>
+                        <option value="EMPLOYEE">Nhân viên</option>
+                        <option value="ADMIN">Quản trị viên</option>
+                    </select>
+                    <label for="role">Vai trò</label>
+                </div>
+                <div class="form-floating mb-3 mt-3">
+                    <input type="text" class="form-control" id="username" name="username" required>
+                    <label for="username">Tài khoản</label>
+                </div>
+
+                <div class="form-floating mb-3 mt-3">
+                    <input type="password" class="form-control" id="password" name="password" required>
+                    <label for="password">Mật khẩu</label>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary px-3 mb-2 fw-bold">Đăng nhập</button>
+                </div>
+            </form>
         </div>
     </div>
+    <p class="text-center text-warning">Nếu chưa có tài khoản, vui lòng liên hệ với quản trị viên để được cấp tài khoản</p>
 </div>
 </body>
 </html>

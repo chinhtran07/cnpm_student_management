@@ -1,0 +1,37 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+
+<h1 class="text-center text-primary ">DANH SÁCH LỚP</h1>
+
+<div class="container">
+
+    <table class="table">
+
+        <tr>
+            <th>Mã học sinh</th>
+            <th>Họ</th>
+            <th>Tên</th>
+            <th>Giới tính</th>
+            <th>Địa chỉ</th>
+        </tr>
+
+        {% for s in students %}
+        <tr>
+            <td>{{s.id}}</td>
+            <td>{{s.last_name}}</td>
+            <td>{{s.first_name}}</td>
+            {% if s.gender|string() == "UserGender.MALE" %}
+            <td>Nam</td>
+            {% else %}
+            <td>Nữ</td>
+            {% endif %}
+            <td>{{s.address}}</td>
+        </tr>
+        {% endfor %}
+
+    </table>
+
+</div>
+
+{% endblock %}

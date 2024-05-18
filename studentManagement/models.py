@@ -1,4 +1,5 @@
-from sqlalchemy import Column, String, Float, Integer, ForeignKey, Enum, Boolean, DateTime, event, func
+from sqlalchemy import Column, String, Float, Integer, ForeignKey, Enum, Boolean, DateTime, event, func, \
+    UniqueConstraint
 from sqlalchemy.orm import relationship, validates
 from studentManagement import db, app
 from flask_login import UserMixin
@@ -35,13 +36,11 @@ class Semester(AttrEnum):
 
 
 class Base(db.Model):
-
     __abstract__ = True
     id = Column(Integer, autoincrement=True, primary_key=True)
 
 
 class Information(Base):
-
     __abstract__ = True
 
     first_name = Column(String(20))
@@ -51,7 +50,7 @@ class Information(Base):
     address = Column(String(100))
     phone_number = Column(String(11))
     email = Column(String(30), unique=True)
-    avatar = Column(String(255))
+    avatar = Column(String(255), default="https://th.bing.com/th/id/R.dbc8e6138b38860cee6899eabc67df45?rik=hZCUMR4xQ%2btlBA&pid=ImgRaw&r=0")
     is_active = Column(Boolean, default=True)
 
 
@@ -89,13 +88,17 @@ class Employee(Base):
 
 
 class Period(Base):
-    semester = Column(Enum(Semester))
+    semester = Column(Enum(Semester),)
     year = Column(String(4))
     teach = relationship('Teach', backref='period', lazy=True)
     form_teacher = relationship('FormTeacher', backref='period', uselist=False, lazy=True)
+    student_class = relationship('StudentClass', backref='period', lazy=True)
+    __table_args__ = (
+        UniqueConstraint('semester', 'year', name='unique_semester_year'),
+    )
 
     def __str__(self):
-        return f'{self.semester} {self.year}'
+        return f'{"Học kì 1" if self.semester == Semester.SEMESTER_1 else "Học kì 2"} {self.year}'
 
 
 class Class(Base):
@@ -152,6 +155,7 @@ class Policy(Base):
 class StudentClass(Base):
     student_id = Column(Integer, ForeignKey(Student.id))
     class_id = Column(Integer, ForeignKey(Class.id))
+    period_id = Column(Integer, ForeignKey(Period.id))
 
 
 if __name__ == '__main__':
@@ -176,6 +180,25 @@ if __name__ == '__main__':
         #          user_role=UserRole.ADMIN, is_supervisor=True)
         # db.session.add(u)
         #
+        # db.create_all()
+        #
+        # import json
+        #
+        # with open('data/student.json', encoding="utf-8") as f:
+        #     students = json.load(f)
+        #     for s in students:
+        #         stud = Student(first_name=s['first_name'], last_name=s['last_name'], gender=s['gender'],
+        #                        address=s['address'],
+        #                        phone_number=s['phone_number'], email=s['email'], avatar=s['avatar'])
+        #         db.session.add(stud)
+        #     db.session.commit()
+        #
+        import hashlib
+        u = User(first_name='', username='admin1',
+                 password=str(hashlib.md5("123456".encode('utf-8')).hexdigest()),
+                 user_role=UserRole.ADMIN, is_supervisor=True)
+        db.session.add(u)
+        #
         # u2 = User(username='kiet', user_role=UserRole.TEACHER, is_supervisor=False, first_name='Kiet',
         #           last_name='Nguyen',
         #           gender=UserGender.MALE, address='HCM', phone_number='0923740834', email='kiet@gmail.com',
@@ -195,6 +218,13 @@ if __name__ == '__main__':
         # teacher1 = Teacher(qualification="Ngoo", user_id=u3.get_id())
         # admin = Admin(user_id=u.get_id())
         # db.session.add_all([admin, teacher, teacher1])
+        #
+        #admin = Admin(user_id=u.get_id())
+        # db.session.add(u2)
+        #db.session.commit()
+        #
+        # teacher = Teacher(qualification="Tiến sĩ", user_id=u2.get_id())
+        # db.session.add_all([admin, teacher])
         # db.session.commit()
         # c1 = Class(name='10A2', grade=StudentGrade.GRADE_10TH)
         # c2 = Class(name='10B1', grade=StudentGrade.GRADE_10TH)
