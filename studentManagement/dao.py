@@ -5,7 +5,6 @@ from datetime import datetime
 from sqlalchemy import desc, func, select, case
 from sqlalchemy.orm import aliased
 
-
 from studentManagement import db, app
 from studentManagement.models import User, Student, Period, StudentClass, Policy, Class, Semester, Teach, Teacher, \
     Subject, Score, ScoreDetail, ScoreType, Information
@@ -92,9 +91,12 @@ def get_student():
 def get_student_info(phone_number):
     return Information.query.filter_by(phone_number=phone_number).first()
 
+
 def get_subject():
     all_subject = Subject.query.all()
     return all_subject
+
+
 ########### Teacher function
 # lấy danh sách lớp
 def load_class(grade=None, page=None, class_name=None, class_id=None):
@@ -127,11 +129,13 @@ def count_class():
 
 
 # đếm tổng số học sinh của 1 lớp
-def count_total(class_id=None):
+def count_total(class_id=None, period_id = None):
     counter = StudentClass.query
 
     if class_id:
         counter = counter.filter(StudentClass.class_id.__eq__(class_id))
+    if period_id:
+        counter = counter.filter(StudentClass.period_id.__eq__(period_id))
 
     return counter.count()
 
@@ -180,7 +184,7 @@ def get_teacher_id(user_id=None):
 
 
 # get Subject by subject_id
-def get_subject(subject_id=None):
+def get_subject_by_subject_id(subject_id=None):
     query = Subject.query
     if subject_id:
         query = query.filter(Subject.id.__eq__(subject_id))
@@ -262,7 +266,7 @@ def count_scores(student_id=None, subject_id=None, period_id=None, class_id=None
     if class_id:
         query = query.filter(StudentClass.class_id.__eq__(class_id))
     if period_id:
-        query = query.filter(Score.period_id.__eq__(period_id))
+        query = query.filter(Score.period_id.__eq__(period_id),StudentClass.period_id.__eq__(period_id))
     if score_type:
         query = query.filter(ScoreDetail.type.__eq__(str_to_enum(score_type)))
 
@@ -307,7 +311,7 @@ def get_teach_subject(teacher_id):
     return query.all()
 
 
-def update_score (score_id, value = None):
+def update_score(score_id, value=None):
     query = ScoreDetail.query.get(score_id)
 
     if value:
@@ -316,6 +320,7 @@ def update_score (score_id, value = None):
     db.session.commit()
 
 
+########################
 def get_subjects():
     return db.session.query(Subject).all()
 
@@ -379,7 +384,8 @@ def get_subject_by_id(subject_id):
 
 if __name__ == '__main__':
     with app.app_context():
-        pass
+        test = count_scores(student_id=4, subject_id=1, period_id=2, class_id=1, score_type='ScoreType.EXAM_15MINS')
+        print(test)
         # subjects = get_subjects()
         # for subject in subjects:
         #     print(subject.name)

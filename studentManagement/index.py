@@ -118,10 +118,10 @@ def list_student():
 @app.route('/teacher/score_input')
 def score_input():
     class_obj = dao.load_class(class_id=request.args.get('class_id'))
-    subject = dao.get_subject(subject_id=request.args.get('subject_id'))
+    subject = dao.get_subject_by_subject_id(subject_id=request.args.get('subject_id'))
     period = dao.get_period_by_id(period_id=request.args.get('period'))
     students = dao.get_list_student(class_id=class_obj.id, period_id=request.args.get('period'))
-    
+
     scores = dao.get_score(period_id=period.id, class_id=class_obj.id, subject_id=subject.id)
 
     return render_template(template_name_or_list='teacher/score_input.html', class_obj=class_obj,
@@ -131,13 +131,13 @@ def score_input():
 @app.route('/teacher/score_table')
 def score_table():
     class_obj = dao.load_class(class_id=request.args.get('class_id'))
-    subject = dao.get_subject(subject_id=request.args.get('subject_id'))
+    subject = dao.get_subject_by_subject_id(subject_id=request.args.get('subject_id'))
     period = dao.get_period_by_id(period_id=request.args.get('period'))
     students = dao.get_list_student(class_id=class_obj.id, period_id=request.args.get('period'))
 
     scores = dao.get_score(period_id=period.id, class_id=class_obj.id, subject_id=subject.id)
     total_score = dao.count_scores(subject_id=subject.id, class_id=class_obj.id, period_id=period.id)
-    total_score_input = dao.count_total(class_id=class_obj.id) * (
+    total_score_input = dao.count_total(class_id=class_obj.id, period_id=period.id) * (
             subject.exam_15mins + subject.exam_45mins + 1)
     list_avr = []
     if total_score >= total_score_input:
@@ -150,13 +150,13 @@ def score_table():
                            total_score_input=total_score_input, list_avr=list_avr)
 
 
-@app.route('/teacher/api/scores', methods=['post'])
+@app.route('/api/teacher/scores', methods=['post'])
 def add_to_scores():
     scores = session.get('scores')
     if not scores:  # nếu ko có cái giỏ thì tạo cái giỏ rỗng
         scores = {}
 
-    # request.json.get('student_id')
+
     id = str(random.randint(0, 100))
 
     sd_id = request.json.get('student_id')
@@ -167,12 +167,13 @@ def add_to_scores():
     subject_id = request.json.get('subject_id')
     period_id = request.json.get('period_id')
 
-    subject = dao.get_subject(subject_id=subject_id)
+    subject = dao.get_subject_by_subject_id(subject_id=subject_id)
 
     counter = dao.count_scores(student_id=sd_id, class_id=class_id, subject_id=subject_id, score_type=scr_type,
                                period_id=period_id)
     counter_sess = dao.count_scores_in_session(scores, type=scr_type, student_id=sd_id)
-
+    print(counter)
+    print(counter_sess)
     if scr_type == 'ScoreType.EXAM_15MINS':
 
         if counter + counter_sess >= subject.exam_15mins:
@@ -200,7 +201,7 @@ def add_to_scores():
     return jsonify({'id': 4, 'message': "Thêm thành công", 'status': 200})
 
 
-@app.route('/teacher/api/save_scores', methods=['post'])
+@app.route('/api/teacher/save_scores', methods=['post'])
 def save_scores():
     subject_id = request.args.get('subject_id')
     period_id = request.args.get('period_id')
@@ -220,7 +221,7 @@ def save_scores():
 
 
 # Update score function
-@app.route('/teacher/api/update_score/<score_id>', methods=['put'])
+@app.route('/api/teacher/update_score/<score_id>', methods=['put'])
 def update_score(score_id):
     value = request.json['value']
     try:
@@ -235,8 +236,8 @@ def update_score(score_id):
 @app.route('/teacher/download_pdf', methods=['post'])
 def download_pdf():
     class_obj = dao.load_class(class_id=request.json.get('class_id'))
-    subject = dao.get_subject(subject_id=request.json.get('subject_id'))
-    period = dao.get_period(period_id=request.json.get('period_id'))
+    subject = dao.get_subject_by_subject_id(subject_id=request.json.get('subject_id'))
+    period = dao.get_period_by_id(period_id=request.json.get('period_id'))
     students = dao.get_list_student(class_id=class_obj.id, period_id=request.args.get('period'))
     scores = dao.get_score(period_id=period.id, class_id=class_obj.id, subject_id=subject.id)
     total_score = dao.count_scores(subject_id=subject.id, class_id=class_obj.id, period_id=period.id)
