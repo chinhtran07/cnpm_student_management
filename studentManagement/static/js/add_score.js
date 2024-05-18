@@ -44,3 +44,24 @@ function createScore (subject_id, period_id){
 
     })
 }
+
+function updateScore (scoreId, obj){
+    fetch(`/teacher/api/update_score/${scoreId}`,{
+        method:'put',
+        body:JSON.stringify({
+            "value": parseFloat(obj.value)
+        }),
+        headers:{
+            "Content-Type":"application/json"
+        }
+    }).then(res => res.json()).then(data=>{
+
+        if (data.status === 200){
+            alert("Sửa thành công !!!! ")
+        } else{
+        alert("Sửa không thành công !!!! ")
+        console.info(data)
+        }
+
+    })
+}

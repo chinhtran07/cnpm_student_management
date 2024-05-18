@@ -5,7 +5,8 @@ from datetime import datetime
 from sqlalchemy import desc, func, select, case
 from sqlalchemy.orm import aliased
 
-from studentManagement import db, app, admin
+
+from studentManagement import db, app
 from studentManagement.models import User, Student, Period, StudentClass, Policy, Class, Semester, Teach, Teacher, \
     Subject, Score, ScoreDetail, ScoreType, Information
 
@@ -36,6 +37,7 @@ def add_user(name, username, password, avatar):
     u = User(name=name, username=username, password=password, avatar=avatar)
     db.session.add(u)
     db.session.commit()
+
 
 
 def auth_user(username, password, role):
@@ -91,12 +93,9 @@ def get_student():
 def get_student_info(phone_number):
     return Information.query.filter_by(phone_number=phone_number).first()
 
-
 def get_subject():
     all_subject = Subject.query.all()
     return all_subject
-
-
 ########### Teacher function
 # lấy danh sách lớp
 def load_class(grade=None, page=None, class_name=None, class_id=None):
@@ -189,7 +188,7 @@ def get_subject(subject_id=None):
 
 
 # get Period by period_id
-def get_period_by_id(period_id=None):
+def get_period(period_id=None):
     query = Period.query
     if period_id:
         query = query.filter(Period.id.__eq__(period_id))
@@ -212,7 +211,7 @@ def str_to_enum(s):
 def get_score(student_id=None, subject_id=None, period_id=None, class_id=None, score_type=None):
     query = (Score.query.join(ScoreDetail, Score.score_detail_id == ScoreDetail.id).
              join(StudentClass, Score.student_id == StudentClass.student_id).
-             add_columns(ScoreDetail.score, ScoreDetail.type, Score.student_id))
+             add_columns(ScoreDetail.score, ScoreDetail.type, Score.student_id, ScoreDetail.id))
 
     if student_id:
         query = query.filter(Score.student_id.__eq__(student_id))
@@ -307,7 +306,14 @@ def get_teach_subject(teacher_id):
     return query.all()
 
 
-#################################################
+def update_score (score_id, value = None):
+    query = ScoreDetail.query.get(score_id)
+
+    if value:
+        query.score = value
+
+    db.session.commit()
+
 
 def get_subjects():
     return db.session.query(Subject).all()
@@ -372,8 +378,11 @@ def get_subject_by_id(subject_id):
 
 if __name__ == '__main__':
     with app.app_context():
-        a = count_students_of_classes_by_subject_and_period(1, semester=Semester.SEMESTER_1.name, year="2024")
-        b = count_students_of_classes_by_subject_and_period(1, semester=Semester.SEMESTER_1.name, year="2024", avg_gt_or_equal_to=5)
-        c = admin.combined_data(a,b)
-        # d = get_average_scores(3,1,1,1 )
-        print(c)
+        pass
+        # subjects = get_subjects()
+        # for subject in subjects:
+        #     print(subject.name)
+
+        # years = get_years()
+        # for year in years:
+        #     print(year)
