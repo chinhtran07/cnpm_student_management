@@ -5,8 +5,10 @@ from flask_login import login_user, current_user, logout_user
 import math
 import pdb
 from studentManagement import app, dao, login
-from weasyprint import HTML
+#from weasyprint import HTML
 
+from studentManagement.ClassroomForm import ClassroomForm, StudentForm
+from studentManagement.models import Class, Student
 
 
 @app.route('/')
@@ -52,32 +54,85 @@ def employee():
     return render_template("employee/employee.html", total_student=total_student)
 
 
-@app.route('/employee/adjust_regulations')
-def adjust_regulations():
-    return render_template('employee/adjust_regulations.html')
+@app.route('/employee/students/', methods=['GET'])
+def student_list():
+    students = dao.get_all_student_info()
+    return render_template('/employee/students.html', students=students)
 
 
-@app.route('/employee/add_student', methods=['GET', 'POST'])
-def add_student():
-    if request.method == 'POST':
-        first_name = request.form['first_name']
-        last_name = request.form['last_name']
-        gender = request.form['gender']
-        dob = request.form['dob']
-        address = request.form['address']
-        phone_number = request.form['phone_number']
-        avatar = request.form['avatar']
+@app.route('/employee/students/', methods=['POST'])
+def add_or_update_student():
+    form = StudentForm()
+    if form.validate_on_submit():
+        dao.create_or_update_student(id=form.id.data, first_name=form.first_name.data, last_name=form.last_name.data,
+                                     gender=form.gender.data, admission_date=form.admission_date.data,
+                                     dob=form.dob.data,
+                                     address=form.address.data, email=form.email.data,
+                                     phone_number=form.phone_number.data,
+                                     is_active=form.is_active.data)
 
-        dao.add_student_info(first_name, last_name, gender, dob, address, phone_number, avatar)
-        student_info = dao.get_student_info(phone_number)
-        return render_template('employee/student_info.html', student_info=student_info)
-    else:
-        return render_template('employee/add_student.html')
+        return redirect('/employee/students')
 
 
-@app.route('/employee/subject_managements')
-def get_subject():
-    return render_template('employee/subject_managements.html', subjects=dao.get_subject())
+@app.route('/employee/students/<int:id>', methods=['GET'])
+def update_student(id):
+    student = dao.get_student_by_id(id)
+    form = StudentForm(obj=student)
+    return render_template('employee/student_form.html', form=form)
+
+
+@app.route('/employee/students/create', methods=['GET', 'POST'])
+def create_student():
+    student = Student()
+    form = StudentForm(request.form, obj=student)
+    return render_template('employee/add_student.html', form=form)
+
+
+@app.route('/employee/students/delete/<int:id>')
+def delete_student(id):
+    dao.delete_student(id)
+    return redirect('/employee/students')
+
+
+# ****************
+@app.route('/employee/classrooms/', methods=['GET'])
+def classroom_list():
+    classrooms = dao.get_all_classroom_info()
+    return render_template('/employee/classrooms.html', classrooms=classrooms)
+
+
+@app.route('/employee/classrooms/', methods=['POST'])
+def add_or_update_classroom():
+    form = ClassroomForm()
+    form.students.choices = [(s['id'], s['name']) for s in dao.get_all_student_info()]
+    if form.validate_on_submit():
+        dao.create_or_update_classroom(id=form.id.data, name=form.name.data,
+                                       list_student_id=form.students.data)
+
+        return redirect('/employee/classrooms')
+
+
+@app.route('/employee/classrooms/<int:id>', methods=['GET'])
+def update_classroom(id):
+    classroom = dao.get_classroom_by_id(id)
+    form = ClassroomForm(obj=classroom)
+    form.students.choices = [(s['id'], s['name']) for s in dao.get_all_student_info()]
+    form.students.data = [s.student_id for s in classroom.student_class]
+    return render_template('employee/classroom_form.html', form=form)
+
+
+@app.route('/employee/classrooms/create', methods=['GET'])
+def create_classroom():
+    classroom = Class()
+    form = ClassroomForm(request.form, obj=classroom)
+    return render_template('employee/classroom_form.html', form=form)
+
+
+@app.route('/employee/classrooms/delete/<int:id>')
+def delete_classroom(id):
+    dao.delete_classroom(id)
+    return redirect('/employee/classrooms')
+
 
 
 @app.route('/teacher', methods=['get', 'post'])
@@ -269,6 +324,8 @@ def download_pdf():
 
 
 # teacher process
+
+
 
 if __name__ == '__main__':
     with app.app_context():

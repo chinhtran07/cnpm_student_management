@@ -1,0 +1,52 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+
+<h1 class="text-center text-primary">QUẢN LÝ HỌC SINH</h1>
+
+<div class="row">
+
+<div class="col-md-10">
+    <button type="button" class="btn btn-success">Lưu thông tin</button>
+    <a href="/employee/students/create" class="btn btn-info">Thêm học sinh</a>
+</div>
+        <div class="col-md-2 card" style="width:150px">
+            <img class="card-img-top" src="https://th.bing.com/th/id/R.dbc8e6138b38860cee6899eabc67df45?rik=hZCUMR4xQ%2btlBA&amp;pid=ImgRaw&amp;r=0" style="width:100px" alt="Card image">
+
+        <div class="card-body">
+            <h4 class="card-title"> </h4>
+            <h4 class="card-title"> </h4>
+            <a href="/logout" class="btn btn-danger">Đăng xuất</a>
+        </div>
+    </div>
+</div>
+
+<table class="table table-hover table-striped table-bordered">
+        <thead>
+        <tr>
+                <th>Id</th>
+                <th>Tên</th>
+                <th>Giới tính</th>
+                <th>Ngày nhập học</th>
+                <th>Ngày sinh</th>
+                <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for student in students %}
+            <tr>
+                <td>{{ student.id }}</td>
+                <td>{{ student.name }}</td>
+                <td>{{ student.gender }}</td>
+                <td>{{ student.admission_date }}</td>
+                <td>{{ student.dob }}</td>
+                <td>
+                    <a href="{{ url_for('update_student', id=student.id) }}" class="btn btn-success">Cập nhật</a>
+                    <a href="{{ url_for('delete_student', id=student.id) }}" class="btn btn-danger">Xóa</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

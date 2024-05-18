@@ -1,0 +1,50 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+
+<h1 class="text-center text-primary">QUẢN LÝ LỚP HỌC</h1>
+
+<div class="row">
+
+<div class="col-md-10">
+    <button type="button" class="btn btn-success">Lưu thông tin</button>
+    <a href="{{url_for('create_classroom')}}" class="btn btn-info">Thêm lớp học</a>
+</div>
+        <div class="col-md-2 card" style="width:150px">
+            <img class="card-img-top" src="https://th.bing.com/th/id/R.dbc8e6138b38860cee6899eabc67df45?rik=hZCUMR4xQ%2btlBA&amp;pid=ImgRaw&amp;r=0" style="width:100px" alt="Card image">
+
+        <div class="card-body">
+            <h4 class="card-title"> </h4>
+            <h4 class="card-title"> </h4>
+            <a href="/logout" class="btn btn-danger">Đăng xuất</a>
+        </div>
+    </div>
+</div>
+
+<table class="table table-hover table-striped table-bordered">
+        <thead>
+        <tr>
+                <th>Id</th>
+                <th>Tên</th>
+                <th>Số lượng học sinh</th>
+                <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for classroom in classrooms %}
+            <tr>
+                <td>{{ classroom.id }}</td>
+                <td>{{ classroom.name }}</td>
+                <td>{{ classroom.student_count }}</td>
+                <td>
+                    <a href="{{ url_for('update_classroom', id=classroom.id) }}" class="btn btn-success">Cập nhật</a>
+                    {% if classroom.student_count == 0 %}
+                    <a href="{{ url_for('delete_classroom', id=classroom.id) }}" class="btn btn-danger">Xóa</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
