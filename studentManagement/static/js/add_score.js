@@ -1,5 +1,5 @@
 function addToScores(score,type,student_id,subject_id, class_id, period_id){
-    fetch ("/teacher/api/scores",{
+    fetch ("/api/teacher/scores",{
         method:"post",
         body:JSON.stringify({
             "score": score,
@@ -30,7 +30,7 @@ function addToScores(score,type,student_id,subject_id, class_id, period_id){
 }
 
 function createScore (subject_id, period_id){
-    fetch(`/teacher/api/save_scores?subject_id=${subject_id}&period_id=${period_id}`,{
+    fetch(`/api/teacher/save_scores?subject_id=${subject_id}&period_id=${period_id}`,{
 
         method:"post"
     }).then(res => res.json()).then(data=>{
@@ -46,7 +46,7 @@ function createScore (subject_id, period_id){
 }
 
 function updateScore (scoreId, obj){
-    fetch(`/teacher/api/update_score/${scoreId}`,{
+    fetch(`/api/teacher/update_score/${scoreId}`,{
         method:'put',
         body:JSON.stringify({
             "value": parseFloat(obj.value)
