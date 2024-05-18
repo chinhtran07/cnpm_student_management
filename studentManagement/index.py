@@ -1,13 +1,14 @@
-from random import random
+import random
 
-from flask import redirect, request, render_template, session, jsonify
+from flask import redirect, request, render_template, session, jsonify,send_file
 from flask_login import login_user, current_user, logout_user
 import math
 import pdb
-
 from studentManagement import app, dao, login
 from studentManagement.decorators import logged_in
 from studentManagement.models import UserRole
+
+import io
 
 
 @app.route('/')
@@ -58,6 +59,29 @@ def adjust_regulations():
     return render_template('employee/adjust_regulations.html')
 
 
+# @app.route('/employee/add_student', methods=['GET', 'POST'])
+# def add_student():
+#     if request.method == 'POST':
+#         first_name = request.form['first_name']
+#         last_name = request.form['last_name']
+#         gender = request.form['gender']
+#         dob = request.form['dob']
+#         address = request.form['address']
+#         phone_number = request.form['phone_number']
+#         avatar = request.form['avatar']
+#
+#         dao.add_student_info(first_name, last_name, gender, dob, address, phone_number, avatar)
+#         student_info = dao.get_student_info(phone_number)
+#         return render_template('employee/student_info.html', student_info=student_info)
+#     else:
+#         return render_template('employee/add_student.html')
+
+
+# @app.route('/employee/subject_managements')
+# def get_subject():
+#     return render_template('employee/subject_managements.html', subjects=dao.get_subject())
+
+
 @app.route('/employee/add_student', methods=['GET', 'POST'])
 def add_student():
     if request.method == 'POST':
@@ -80,29 +104,8 @@ def add_student():
 def get_subject():
     return render_template('employee/subject_managements.html', subjects=dao.get_subject())
 
-@app.route('/employee/add_student', methods=['GET', 'POST'])
-def add_student():
-    if request.method == 'POST':
-        first_name = request.form['first_name']
-        last_name = request.form['last_name']
-        gender = request.form['gender']
-        dob = request.form['dob']
-        address = request.form['address']
-        phone_number = request.form['phone_number']
-        avatar = request.form['avatar']
 
-        dao.add_student_info(first_name, last_name, gender, dob, address, phone_number, avatar)
-        student_info = dao.get_student_info(phone_number)
-        return render_template('employee/student_info.html', student_info=student_info)
-    else:
-        return render_template('employee/add_student.html')
-
-
-@app.route('/employee/subject_managements')
-def get_subject():
-    return render_template('employee/subject_managements.html', subjects=dao.get_subject())
-
-
+# teacher process
 @app.route('/teacher', methods=['get', 'post'])
 def teacher():
     grade = request.args.get('grade')
@@ -169,7 +172,8 @@ def score_table():
                            subject=subject, period=period, students=students, scores=scores, total_score=total_score,
                            total_score_input=total_score_input, list_avr=list_avr)
 
-@app.route('/api/teacher/scores', methods=['post'])
+
+@app.route('/teacher/api/scores', methods=['post'])
 def add_to_scores():
     scores = session.get('scores')
     if not scores:  # nếu ko có cái giỏ thì tạo cái giỏ rỗng
@@ -219,8 +223,7 @@ def add_to_scores():
     return jsonify({'id': 4, 'message': "Thêm thành công", 'status': 200})
 
 
-
-@app.route('/api/teacher/save_scores', methods=['post'])
+@app.route('/teacher/api/save_scores', methods=['post'])
 def save_scores():
     subject_id = request.args.get('subject_id')
     period_id = request.args.get('period_id')
@@ -238,6 +241,7 @@ def save_scores():
 
     return jsonify({'status': 500})
 
+
 # Update score function
 @app.route('/teacher/api/update_score/<score_id>', methods=['put'])
 def update_score(score_id):
@@ -249,6 +253,12 @@ def update_score(score_id):
         return jsonify({'status': 500})
     return jsonify({'status': 200})
 
+
+# Export pdf
+@app.route('/download_pdf')
+def download_pdf():
+    pass
+# teacher process
 
 if __name__ == '__main__':
     with app.app_context():

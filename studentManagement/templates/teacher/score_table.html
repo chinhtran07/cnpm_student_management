@@ -25,9 +25,10 @@
 </div>
 {% else %}
 <div class="container">
+    <a class="btn btn-danger mb-2" href="/download_pdf">Export file</a>
     <div class="row">
         <div class="col-5">
-            <table class="table ">
+            <table class="table table-bordered">
                 <tr>
                     <th class="col-2">MSH</th>
                     <th>Họ</th>
@@ -43,7 +44,7 @@
             </table>
         </div>
         <div class="col-7">
-            <table class="table ">
+            <table class="table table-bordered">
                 <tr>
                     {% for i in range(subject.exam_15mins) %}
                     <th>Điểm 15p</th>
