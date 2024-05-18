@@ -1,5 +1,5 @@
 function addToScores(score,type,student_id,subject_id, class_id, period_id){
-    fetch ("/TEACHER/api/scores",{
+    fetch ("/teacher/api/scores",{
         method:"post",
         body:JSON.stringify({
             "score": score,
@@ -30,7 +30,7 @@ function addToScores(score,type,student_id,subject_id, class_id, period_id){
 }
 
 function createScore (subject_id, period_id){
-    fetch(`/TEACHER/api/save_scores?subject_id=${subject_id}&period_id=${period_id}`,{
+    fetch(`/teacher/api/save_scores?subject_id=${subject_id}&period_id=${period_id}`,{
 
         method:"post"
     }).then(res => res.json()).then(data=>{
@@ -63,5 +63,24 @@ function updateScore (scoreId, obj){
         console.info(data)
         }
 
-    })
-}
+    })}
+
+function download_pdf (class_id,subject_id,period_id){
+
+        fetch("/teacher/download_pdf",{
+            method:'post',
+            body:JSON.stringify({
+                "class_id": class_id,
+                "subject_id": subject_id,
+                "period_id": period_id
+            }),
+            headers:{
+            "Content-Type":"application/json"
+            }
+        }).then(data=>{
+
+
+        console.info(data)
+
+
+    })}
