@@ -84,6 +84,8 @@ def get_all_student_info():
         student_info.append(info)
     return student_info
 
+def get_student_by_id(id):
+    return Student.query.get(id)
 
 def create_or_update_student(id=None, **kwargs):
     # Cập nhật thông tin học sinh có sẵn
@@ -377,7 +379,7 @@ def count_scores(student_id=None, subject_id=None, period_id=None, class_id=None
     if class_id:
         query = query.filter(StudentClass.class_id.__eq__(class_id))
     if period_id:
-        query = query.filter(Score.period_id.__eq__(period_id),StudentClass.period_id.__eq__(period_id))
+        query = query.filter(Score.period_id.__eq__(period_id), StudentClass.period_id.__eq__(period_id))
     if score_type:
         query = query.filter(ScoreDetail.type.__eq__(str_to_enum(score_type)))
 
@@ -447,34 +449,43 @@ def count_students_of_classes_by_subject_and_period(subject_id, semester, year, 
     if not period:
         return []
 
-    StudentAlias = aliased(Student)
-
     weighted_scores_subquery = (
         db.session.query(
-            StudentAlias.id.label('student_id'),
-            func.avg(
+            Student.id.label('student_id'),
+            func.sum(
                 case(
                     (ScoreDetail.type == 'EXAM_15MINS', ScoreDetail.score * 1),
                     (ScoreDetail.type == 'EXAM_45MINS', ScoreDetail.score * 2),
                     (ScoreDetail.type == 'EXAM_FINAL', ScoreDetail.score * 2),
                     else_=0
                 )
-            ).label('avg_weighted_score')
+            ).label('total_weighted_score'),
+            func.sum(
+                case(
+                    (ScoreDetail.type == 'EXAM_15MINS', 1),
+                    (ScoreDetail.type == 'EXAM_45MINS', 2),
+                    (ScoreDetail.type == 'EXAM_FINAL', 2),
+                    else_=0
+                )
+            ).label('total_weight')
         )
-        .join(Score, StudentAlias.id == Score.student_id)
+        .join(Score, Student.id == Score.student_id)
         .join(ScoreDetail, Score.score_detail_id == ScoreDetail.id)
-        .filter(Score.subject_id == subject_id)
-        .group_by(StudentAlias.id)
+        .filter(Score.subject_id == subject_id, Score.period_id == period.id)
+        .group_by(Student.id)
     ).subquery()
+
+    weighted_avg_score = ((weighted_scores_subquery.c.total_weighted_score / weighted_scores_subquery.c.total_weight)
+                          .label('avg_weighted_score')
+                          )
 
     # Base query to retrieve classes and count of students
     base_query = (
         db.session.query(Class.id, Class.name, func.count(Student.id))
         .join(Teach)
-        .join(Period)
         .join(StudentClass, Class.id == StudentClass.class_id, isouter=True)
         .join(Student, isouter=True)
-        .filter(Teach.subject_id == subject_id, Period.id == period.id)
+        .filter(StudentClass.period_id == period.id)
         .group_by(Class.id)
     )
 
@@ -483,7 +494,7 @@ def count_students_of_classes_by_subject_and_period(subject_id, semester, year, 
         base_query = (
             base_query
             .join(weighted_scores_subquery, Student.id == weighted_scores_subquery.c.student_id)
-            .filter(weighted_scores_subquery.c.avg_weighted_score >= avg_gt_or_equal_to)
+            .filter(weighted_avg_score >= avg_gt_or_equal_to)
         )
 
     return base_query.all()
